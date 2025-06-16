@@ -9,9 +9,9 @@ const ScoringLogic = {
         gameState.score[inning] += run;
         gameState.balls++;
 
-        if (run === 1) this.swapStrike();
-        this.recordBall(run)
-
+        if (run === 1) this.recordBall(run);
+        this.swapStrike();
+        
         if (run % 2 === 1) this.swapStrike();
         this.recordBall(run);
 
