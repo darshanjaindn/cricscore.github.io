@@ -1,44 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cricket Scorer App - Coming Soon</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: #f7f7f7;
-        }
-        h1 {
-            color: #2b2b2b;
-        }
-        .box {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            display: inline-block;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-        }
-        a.button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        a.button:hover {
-            background: #218838;
-        }
-    </style>
+    <title>Cricket Scorer Web App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="box">
-        <h1>Welcome to My Cricket Scorer App</h1>
-        <p>This app will allow you to score cricket matches, save them, and export as PDF.</p>
-        <p>Coming Soon for iOS and Android!</p>
-        <a href="https://github.com/YOUR_USERNAME" class="button">Follow My GitHub</a>
+    <div class="container">
+        <h1>🏏 Cricket Scorer</h1>
+
+        <div>
+            <input id="player1" placeholder="Enter Player 1 Name" />
+            <input id="player2" placeholder="Enter Player 2 Name" />
+            <button onclick="savePlayers()">Save Players</button>
+        </div>
+
+        <h2>Score: <span id="score">0/0</span></h2>
+        <button onclick="addRun(1)">+1 Run</button>
+        <button onclick="addRun(4)">+4 Runs</button>
+        <button onclick="addRun(6)">+6 Runs</button>
+        <button onclick="addWicket()">Wicket</button>
+
+        <br><br>
+        <button onclick="exportPDF()">Export to PDF</button>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
