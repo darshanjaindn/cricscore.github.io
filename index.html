@@ -2,7 +2,7 @@
 <html lang="en" ng-app="cricketApp" ng-controller="MatchController">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cricket Scorer</title>
 
   <!-- Bootstrap CSS -->
@@ -14,20 +14,32 @@
   <style>
     body {
       background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
     }
+
     header {
       background-color: #2d7a2d;
       color: white;
       padding: 20px;
       text-align: center;
     }
-    .form-container {
+
+    .section-card {
       background: white;
       border-radius: 10px;
       padding: 20px;
-      margin: 20px auto;
-      max-width: 500px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
+
+    .container-custom {
+      max-width: 500px;
+      margin: 20px auto 80px;
+      padding: 0 10px;
+    }
+
     footer {
       position: fixed;
       bottom: 0;
@@ -35,14 +47,27 @@
       background: #fff;
       border-top: 1px solid #ccc;
     }
+
     .footer-nav {
       display: flex;
       justify-content: space-around;
-      padding: 10px;
+      padding: 10px 0;
       font-size: 14px;
     }
+
     .btn-start {
       width: 100%;
+      padding: 12px;
+      font-size: 18px;
+    }
+
+    @media (max-width: 480px) {
+      .section-card {
+        padding: 16px;
+      }
+      .btn-start {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
@@ -52,8 +77,11 @@
   <h2><strong>Cricket</strong> Scorer</h2>
 </header>
 
-<div class="form-container shadow-sm" ng-cloak>
-  <form novalidate>
+<div class="container-custom" ng-cloak>
+
+  <!-- 🟢 Teams Section -->
+  <div class="section-card">
+    <h5>Team Setup</h5>
     <div class="mb-3">
       <label for="teamA" class="form-label">Host Team</label>
       <input type="text" class="form-control" id="teamA" ng-model="teamA">
@@ -62,48 +90,50 @@
       <label for="teamB" class="form-label">Visitor Team</label>
       <input type="text" class="form-control" id="teamB" ng-model="teamB">
     </div>
+  </div>
 
-    <div class="mb-3">
-      <label class="form-label">Toss won by?</label><br>
-      <div class="form-check form-check-inline">
-        <input type="radio" class="form-check-input" ng-model="tossWinner" ng-value="teamA" name="toss">
-        <label class="form-check-label">{{ teamA || "Host Team" }}</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input type="radio" class="form-check-input" ng-model="tossWinner" ng-value="teamB" name="toss">
-        <label class="form-check-label">{{ teamB || "Visitor Team" }}</label>
-      </div>
+  <!-- 🟡 Toss Section -->
+  <div class="section-card">
+    <h5>Toss</h5>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" ng-model="tossWinner" ng-value="teamA" id="tossA" name="toss">
+      <label class="form-check-label" for="tossA">{{ teamA || "Host Team" }}</label>
     </div>
-
-    <div class="mb-3">
-      <label class="form-label">Opted to?</label><br>
-      <div class="form-check form-check-inline">
-        <input type="radio" class="form-check-input" ng-model="opted" value="Bat" name="opt">
-        <label class="form-check-label">Bat</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input type="radio" class="form-check-input" ng-model="opted" value="Bowl" name="opt">
-        <label class="form-check-label">Bowl</label>
-      </div>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" ng-model="tossWinner" ng-value="teamB" id="tossB" name="toss">
+      <label class="form-check-label" for="tossB">{{ teamB || "Visitor Team" }}</label>
     </div>
+  </div>
 
-    <div class="mb-3">
-      <label for="overs" class="form-label">Overs (1 to 50)</label>
-      <input type="number" id="overs" class="form-control" ng-model="overs" min="1" max="50">
+  <!-- 🔵 Opted To Section -->
+  <div class="section-card">
+    <h5>Opted To</h5>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" ng-model="opted" value="Bat" id="optBat" name="opt">
+      <label class="form-check-label" for="optBat">Bat</label>
     </div>
-
-    <div class="d-flex justify-content-between align-items-center">
-      <a href="#" class="text-decoration-underline">Advanced settings</a>
+    <div class="form-check">
+      <input type="radio" class="form-check-input" ng-model="opted" value="Bowl" id="optBowl" name="opt">
+      <label class="form-check-label" for="optBowl">Bowl</label>
     </div>
+  </div>
 
-    <button type="button" class="btn btn-success mt-3 btn-start"
-            ng-disabled="!isValid()"
-            ng-click="startMatch()">
-      Start Match
-    </button>
-  </form>
+  <!-- 🟠 Overs Section -->
+  <div class="section-card">
+    <h5>Overs</h5>
+    <label for="overs" class="form-label">Number of Overs (1 to 50)</label>
+    <input type="number" class="form-control" id="overs" ng-model="overs" min="1" max="50">
+  </div>
+
+  <!-- 🟣 Start Match Button -->
+  <button type="button" class="btn btn-success btn-start"
+          ng-disabled="!isValid()" ng-click="startMatch()">
+    Start Match
+  </button>
+
 </div>
 
+<!-- 🔻 Bottom Footer Nav -->
 <footer>
   <div class="footer-nav text-center">
     <div>🏏<br>New Match</div>
@@ -112,7 +142,7 @@
   </div>
 </footer>
 
-<!-- Angular App Script -->
+<!-- 🧠 AngularJS Logic -->
 <script>
   angular.module('cricketApp', [])
     .controller('MatchController', function($scope) {
@@ -123,19 +153,17 @@
       $scope.opted = '';
 
       $scope.isValid = function() {
-        return $scope.teamA && $scope.teamB && $scope.overs >= 1 && $scope.overs <= 50
-               && $scope.tossWinner && $scope.opted;
+        return $scope.teamA && $scope.teamB &&
+               $scope.overs >= 1 && $scope.overs <= 50 &&
+               $scope.tossWinner && $scope.opted;
       };
 
       $scope.startMatch = function() {
-        // You can store values in localStorage here
         localStorage.setItem('teamA', $scope.teamA);
         localStorage.setItem('teamB', $scope.teamB);
         localStorage.setItem('overs', $scope.overs);
         localStorage.setItem('tossWinner', $scope.tossWinner);
         localStorage.setItem('opted', $scope.opted);
-
-        // Redirect to player setup
         window.location.href = "player_setup.html";
       };
     });
