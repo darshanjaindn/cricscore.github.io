@@ -96,25 +96,19 @@
 </div>
 
 <script>
-  angular.module('cricketApp', [])
-    .controller('PlayerSetupController', function($scope) {
-      $scope.striker = '';
-      $scope.nonStriker = '';
-      $scope.bowler = '';
-
-      $scope.isValid = function() {
-        return $scope.striker && $scope.nonStriker && $scope.bowler;
-      };
-
-      $scope.startMatch = function() {
-        localStorage.setItem('striker', $scope.striker);
-        localStorage.setItem('nonStriker', $scope.nonStriker);
-        localStorage.setItem('bowler', $scope.bowler);
-        alert("Match setup complete! Proceeding...");
-        // TODO: Navigate to scoring screen
-        // window.location.href = "scoring.html";
-      };
-    });
+    function startMatch() {
+        const striker = document.getElementById('striker').value;
+        const nonStriker = document.getElementById('nonStriker').value;
+        const bowler = document.getElementById('bowler').value;
+    
+        // Optional: Save player names in localStorage
+        localStorage.setItem('striker', striker);
+        localStorage.setItem('nonStriker', nonStriker);
+        localStorage.setItem('bowler', bowler);
+    
+        // Redirect to scoring.html
+        window.location.href = 'scoring.html';
+    }
 </script>
 
 </body>
