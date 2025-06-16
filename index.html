@@ -1,54 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" ng-app="cricketApp" ng-controller="MatchController">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cricket Scorer</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+  <style>
+    body {
+      background: #f2f2f2;
+    }
+    header {
+      background-color: #2d7a2d;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .form-container {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ccc;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      font-size: 14px;
+    }
+    .btn-start {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-  <!-- Top Green Header -->
-  <header>
-    <h1><span class="highlight">Cricket</span> scorer</h1>
-  </header>
 
-  <!-- Main Match Setup Form -->
-  <div class="form-container">
-    <label>Teams</label>
-    <input type="text" id="teamA" placeholder="Host Team" oninput="checkForm()">
-    <input type="text" id="teamB" placeholder="Visitor Team" oninput="checkForm()">
+<header>
+  <h2><strong>Cricket</strong> Scorer</h2>
+</header>
 
-    <label>Toss won by?</label>
-    <div class="radio-group">
-      <label><input type="radio" name="toss" value="A" onchange="checkForm()"> <span id="labelA">Host Team</span></label>
-      <label><input type="radio" name="toss" value="B" onchange="checkForm()"> <span id="labelB">Visitor Team</span></label>
+<div class="form-container shadow-sm" ng-cloak>
+  <form novalidate>
+    <div class="mb-3">
+      <label for="teamA" class="form-label">Host Team</label>
+      <input type="text" class="form-control" id="teamA" ng-model="teamA">
+    </div>
+    <div class="mb-3">
+      <label for="teamB" class="form-label">Visitor Team</label>
+      <input type="text" class="form-control" id="teamB" ng-model="teamB">
     </div>
 
-    <label>Opted to?</label>
-    <div class="radio-group">
-      <label><input type="radio" name="opt" value="Bat" onchange="checkForm()"> Bat</label>
-      <label><input type="radio" name="opt" value="Bowl" onchange="checkForm()"> Bowl</label>
+    <div class="mb-3">
+      <label class="form-label">Toss won by?</label><br>
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" ng-model="tossWinner" ng-value="teamA" name="toss">
+        <label class="form-check-label">{{ teamA || "Host Team" }}</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" ng-model="tossWinner" ng-value="teamB" name="toss">
+        <label class="form-check-label">{{ teamB || "Visitor Team" }}</label>
+      </div>
     </div>
 
-    <label>Overs?</label>
-    <input type="number" id="overs" min="1" max="50" placeholder="16" oninput="checkForm()">
-
-    <!-- Buttons Row -->
-    <div class="actions">
-      <a href="#" class="advanced">Advanced settings</a>
-      <button id="startMatch" onclick="startMatch()" disabled>Start match</button>
+    <div class="mb-3">
+      <label class="form-label">Opted to?</label><br>
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" ng-model="opted" value="Bat" name="opt">
+        <label class="form-check-label">Bat</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" ng-model="opted" value="Bowl" name="opt">
+        <label class="form-check-label">Bowl</label>
+      </div>
     </div>
+
+    <div class="mb-3">
+      <label for="overs" class="form-label">Overs (1 to 50)</label>
+      <input type="number" id="overs" class="form-control" ng-model="overs" min="1" max="50">
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <a href="#" class="text-decoration-underline">Advanced settings</a>
+    </div>
+
+    <button type="button" class="btn btn-success mt-3 btn-start"
+            ng-disabled="!isValid()"
+            ng-click="startMatch()">
+      Start Match
+    </button>
+  </form>
+</div>
+
+<footer>
+  <div class="footer-nav text-center">
+    <div>🏏<br>New Match</div>
+    <div>👥<br>Teams</div>
+    <div>📜<br>History</div>
   </div>
+</footer>
 
-  <!-- Bottom Nav Bar (non-functional for now) -->
-  <footer>
-    <div class="nav">
-      <div>🏏<br>New Match</div>
-      <div>👥<br>Teams</div>
-      <div>📜<br>History</div>
-    </div>
-  </footer>
+<!-- Angular App Script -->
+<script>
+  angular.module('cricketApp', [])
+    .controller('MatchController', function($scope) {
+      $scope.teamA = '';
+      $scope.teamB = '';
+      $scope.overs = null;
+      $scope.tossWinner = '';
+      $scope.opted = '';
 
-  <script src="script.js"></script>
+      $scope.isValid = function() {
+        return $scope.teamA && $scope.teamB && $scope.overs >= 1 && $scope.overs <= 50
+               && $scope.tossWinner && $scope.opted;
+      };
+
+      $scope.startMatch = function() {
+        // You can store values in localStorage here
+        localStorage.setItem('teamA', $scope.teamA);
+        localStorage.setItem('teamB', $scope.teamB);
+        localStorage.setItem('overs', $scope.overs);
+        localStorage.setItem('tossWinner', $scope.tossWinner);
+        localStorage.setItem('opted', $scope.opted);
+
+        // Redirect to player setup
+        window.location.href = "player_setup.html";
+      };
+    });
+</script>
+
 </body>
 </html>
