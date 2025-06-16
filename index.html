@@ -14,14 +14,14 @@
   <!-- Main Match Setup Form -->
   <div class="form-container">
     <label>Teams</label>
-    <input type="text" id="teamA" placeholder="A" oninput="checkForm()">
-    <input type="text" id="teamB" placeholder="B" oninput="checkForm()">
+    <input type="text" id="teamA" placeholder="Host Team" oninput="checkForm()">
+    <input type="text" id="teamB" placeholder="Visitor Team" oninput="checkForm()">
 
     <label>Toss won by?</label>
     <div class="radio-group">
-      <label><input type="radio" name="toss" value="A" onchange="checkForm()"> A</label>
-      <label><input type="radio" name="toss" value="B" onchange="checkForm()"> B</label>
-    </div>
+      <label><input type="radio" name="toss" value="A" onchange="checkForm()"> <span id="labelA">Host Team</span></label>
+      <label><input type="radio" name="toss" value="B" onchange="checkForm()"> <span id="labelB">Visitor Team</span></label>
+<   /div>
 
     <label>Opted to?</label>
     <div class="radio-group">
