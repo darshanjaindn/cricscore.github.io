@@ -1,50 +1,35 @@
-let runs = 0;
-let wickets = 0;
+function checkForm() {
+    const host = document.getElementById('hostTeam').value.trim();
+    const visitor = document.getElementById('visitorTeam').value.trim();
+    const overs = parseInt(document.getElementById('overs').value);
+    const tossWinner = document.querySelector('input[name="tossWinner"]:checked');
+    const optedTo = document.querySelector('input[name="optedTo"]:checked');
 
-window.onload = function () {
-    // Load saved player names
-    if (localStorage.getItem("player1")) {
-        document.getElementById("player1").value = localStorage.getItem("player1");
+    const startBtn = document.getElementById("startButton");
+
+    if (host && visitor && overs >= 1 && overs <= 50 && tossWinner && optedTo) {
+        startBtn.disabled = false;
+        startBtn.classList.add("enabled");
+    } else {
+        startBtn.disabled = true;
+        startBtn.classList.remove("enabled");
     }
-    if (localStorage.getItem("player2")) {
-        document.getElementById("player2").value = localStorage.getItem("player2");
-    }
-    updateScore();
 }
 
-function savePlayers() {
-    let p1 = document.getElementById("player1").value;
-    let p2 = document.getElementById("player2").value;
-    localStorage.setItem("player1", p1);
-    localStorage.setItem("player2", p2);
-    alert("Players saved!");
-}
+function startMatch() {
+    const host = document.getElementById('hostTeam').value.trim();
+    const visitor = document.getElementById('visitorTeam').value.trim();
+    const overs = parseInt(document.getElementById('overs').value);
+    const tossWinner = document.querySelector('input[name="tossWinner"]:checked').value;
+    const optedTo = document.querySelector('input[name="optedTo"]:checked').value;
 
-function addRun(r) {
-    runs += r;
-    updateScore();
-}
+    // Save to localStorage
+    localStorage.setItem("hostTeam", host);
+    localStorage.setItem("visitorTeam", visitor);
+    localStorage.setItem("overs", overs);
+    localStorage.setItem("tossWinner", tossWinner);
+    localStorage.setItem("optedTo", optedTo);
 
-function addWicket() {
-    wickets++;
-    updateScore();
-}
-
-function updateScore() {
-    document.getElementById("score").innerText = `${runs}/${wickets}`;
-}
-
-function exportPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    let p1 = localStorage.getItem("player1") || "Player 1";
-    let p2 = localStorage.getItem("player2") || "Player 2";
-
-    doc.text("Cricket Match Summary", 20, 20);
-    doc.text(`Player 1: ${p1}`, 20, 30);
-    doc.text(`Player 2: ${p2}`, 20, 40);
-    doc.text(`Final Score: ${runs}/${wickets}`, 20, 50);
-
-    doc.save("match_summary.pdf");
+    // Go to next page
+    window.location.href = "player_setup.html";  // (you'll create this next)
 }
