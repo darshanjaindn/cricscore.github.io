@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" ng-app="scorerApp">
 <head>
@@ -5,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Scoring Panel</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/styles.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
 <body ng-controller="ScoringController">
 
   <div class="container mt-3">
-    <!-- Header -->
     <div class="bg-success text-white p-3 rounded mb-3">
       <h4>{{teamA}} vs {{teamB}}</h4>
       <div class="d-flex justify-content-between">
@@ -19,83 +18,61 @@
           <strong>{{teamA}}, 1st inning</strong><br>
           <span>{{score}} - {{wickets}} ({{overs}}.{{balls}})</span>
         </div>
-        <div>
-          CRR<br>{{calculateCRR()}}
-        </div>
+        <div>CRR<br>{{calculateCRR()}}</div>
       </div>
     </div>
 
-    <!-- Batsmen/Bowler Table -->
     <div class="table-responsive mb-3">
       <table class="table table-bordered text-center align-middle">
         <thead>
           <tr><th>Batsman</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr>
         </thead>
         <tbody>
-          <tr><td>{{striker}}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td></tr>
-          <tr><td>{{nonStriker}}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td></tr>
+          <tr><td>{{striker}}</td><td>{{strikerRuns}}</td><td>{{strikerBalls}}</td><td>0</td><td>0</td><td>{{strikeRate(strikerRuns, strikerBalls)}}</td></tr>
+          <tr><td>{{nonStriker}}</td><td>{{nonStrikerRuns}}</td><td>{{nonStrikerBalls}}</td><td>0</td><td>0</td><td>{{strikeRate(nonStrikerRuns, nonStrikerBalls)}}</td></tr>
         </tbody>
         <thead>
           <tr><th>Bowler</th><th>O</th><th>M</th><th>R</th><th>W</th><th>ER</th></tr>
         </thead>
         <tbody>
-          <tr><td>{{bowler}}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td></tr>
+          <tr><td>{{bowler}}</td><td>{{overs}}</td><td>0</td><td>{{score}}</td><td>{{wickets}}</td><td>{{calculateCRR()}}</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- This over -->
     <div class="mb-3">
       <strong>This over:</strong>
       <span class="badge bg-secondary me-1" ng-repeat="ball in currentOver">{{ball}}</span>
     </div>
 
-    <!-- Extra Checkboxes -->
     <div class="mb-3">
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="wide"> <label class="form-check-label" for="wide">Wide</label>
+        <input class="form-check-input" type="checkbox" ng-model="extraWide" id="wide"> <label class="form-check-label" for="wide">Wide</label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="noBall"> <label class="form-check-label" for="noBall">No Ball</label>
+        <input class="form-check-input" type="checkbox" ng-model="extraNoBall" id="noBall"> <label class="form-check-label" for="noBall">No Ball</label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="byes"> <label class="form-check-label" for="byes">Byes</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="legByes"> <label class="form-check-label" for="legByes">Leg Byes</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="wicket"> <label class="form-check-label" for="wicket">Wicket</label>
+        <input class="form-check-input" type="checkbox" ng-model="extraWicket" id="wicket"> <label class="form-check-label" for="wicket">Wicket</label>
       </div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="row g-2 mb-3">
-      <div class="col-4 d-grid">
-        <button class="btn btn-outline-danger">Undo</button>
-      </div>
-      <div class="col-4 d-grid">
-        <button class="btn btn-outline-primary">Partnerships</button>
-      </div>
-      <div class="col-4 d-grid">
-        <button class="btn btn-outline-warning">Extras</button>
-      </div>
+      <div class="col-4 d-grid"><button class="btn btn-outline-danger">Undo</button></div>
+      <div class="col-4 d-grid"><button class="btn btn-outline-primary">Partnerships</button></div>
+      <div class="col-4 d-grid"><button class="btn btn-outline-warning">Extras</button></div>
     </div>
 
-    <!-- Scoring Buttons -->
     <div class="row g-2 mb-4">
       <div class="col-3 d-grid" ng-repeat="run in [0,1,2,3,4,5,6]">
         <button class="btn btn-light border" ng-click="addRun(run)">{{run}}</button>
       </div>
-      <div class="col-3 d-grid">
-        <button class="btn btn-light border">...</button>
-      </div>
+      <div class="col-3 d-grid"><button class="btn btn-light border">...</button></div>
     </div>
 
-    <!-- Retire / Swap Batsman -->
     <div class="d-flex justify-content-between mb-5">
       <button class="btn btn-outline-secondary">Retire</button>
-      <button class="btn btn-success">Swap Batsman</button>
+      <button class="btn btn-success" ng-click="swapBatsman()">Swap Batsman</button>
     </div>
   </div>
 
@@ -107,16 +84,47 @@
       $scope.striker = localStorage.getItem("striker") || "Striker";
       $scope.nonStriker = localStorage.getItem("nonStriker") || "Non-striker";
       $scope.bowler = localStorage.getItem("bowler") || "Bowler";
+
       $scope.score = 0;
       $scope.wickets = 0;
       $scope.overs = 0;
       $scope.balls = 0;
       $scope.currentOver = [];
 
+      $scope.strikerRuns = 0;
+      $scope.strikerBalls = 0;
+      $scope.nonStrikerRuns = 0;
+      $scope.nonStrikerBalls = 0;
+
+      $scope.extraWide = false;
+      $scope.extraNoBall = false;
+      $scope.extraWicket = false;
+
       $scope.addRun = function(run) {
+        let isExtra = $scope.extraWide || $scope.extraNoBall;
+
+        if ($scope.extraWicket) {
+          $scope.wickets += 1;
+          $scope.extraWicket = false;
+        }
+
+        if ($scope.extraWide || $scope.extraNoBall) {
+          $scope.score += run + 1;
+          $scope.currentOver.push((run + 1) + ( $scope.extraWide ? 'Wd' : 'Nb'));
+          $scope.extraWide = false;
+          $scope.extraNoBall = false;
+          return;
+        }
+
         $scope.score += run;
-        $scope.currentOver.push(run);
         $scope.balls += 1;
+        $scope.currentOver.push(run);
+
+        if (run % 2 !== 0) $scope.swapBatsman();
+
+        $scope.strikerRuns += run;
+        $scope.strikerBalls += 1;
+
         if ($scope.balls === 6) {
           $scope.overs += 1;
           $scope.balls = 0;
@@ -127,6 +135,16 @@
       $scope.calculateCRR = function() {
         let totalBalls = $scope.overs * 6 + $scope.balls;
         return totalBalls ? ($scope.score / (totalBalls / 6)).toFixed(2) : "0.00";
+      };
+
+      $scope.swapBatsman = function() {
+        [$scope.striker, $scope.nonStriker] = [$scope.nonStriker, $scope.striker];
+        [$scope.strikerRuns, $scope.nonStrikerRuns] = [$scope.nonStrikerRuns, $scope.strikerRuns];
+        [$scope.strikerBalls, $scope.nonStrikerBalls] = [$scope.nonStrikerBalls, $scope.strikerBalls];
+      };
+
+      $scope.strikeRate = function(runs, balls) {
+        return balls > 0 ? ((runs / balls) * 100).toFixed(2) : "0.00";
       };
     });
   </script>
