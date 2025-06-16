@@ -1,40 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Match Setup - Cricket Scorer</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Cricket Scorer</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🏏 Match Setup</h1>
+  <!-- Top Green Header -->
+  <header>
+    <h1><span class="highlight">Cricket</span> scorer</h1>
+  </header>
 
-        <!-- Team Names -->
-        <label for="hostTeam">Host Team Name:</label>
-        <input type="text" id="hostTeam" oninput="checkForm()">
+  <!-- Main Match Setup Form -->
+  <div class="form-container">
+    <label>Teams</label>
+    <input type="text" id="teamA" placeholder="A" oninput="checkForm()">
+    <input type="text" id="teamB" placeholder="B" oninput="checkForm()">
 
-        <label for="visitorTeam">Visitor Team Name:</label>
-        <input type="text" id="visitorTeam" oninput="checkForm()">
-
-        <!-- Toss Winner -->
-        <p><strong>Toss Won By:</strong></p>
-        <label><input type="radio" name="tossWinner" value="host" onchange="checkForm()"> Host Team</label><br>
-        <label><input type="radio" name="tossWinner" value="visitor" onchange="checkForm()"> Visitor Team</label>
-
-        <!-- Opted To -->
-        <p><strong>Opted To:</strong></p>
-        <label><input type="radio" name="optedTo" value="bat" onchange="checkForm()"> Bat</label><br>
-        <label><input type="radio" name="optedTo" value="bowl" onchange="checkForm()"> Bowl</label>
-
-        <!-- Overs -->
-        <label for="overs">Overs (1-50):</label>
-        <input type="number" id="overs" min="1" max="50" oninput="checkForm()">
-
-        <!-- Start Match Button -->
-        <div id="startContainer">
-            <button id="startButton" onclick="startMatch()" disabled>🚀 Start Match</button>
-        </div>
+    <label>Toss won by?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="toss" value="A" onchange="checkForm()"> A</label>
+      <label><input type="radio" name="toss" value="B" onchange="checkForm()"> B</label>
     </div>
 
-    <script src="script.js"></script>
+    <label>Opted to?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="opt" value="Bat" onchange="checkForm()"> Bat</label>
+      <label><input type="radio" name="opt" value="Bowl" onchange="checkForm()"> Bowl</label>
+    </div>
+
+    <label>Overs?</label>
+    <input type="number" id="overs" min="1" max="50" placeholder="16" oninput="checkForm()">
+
+    <!-- Buttons Row -->
+    <div class="actions">
+      <a href="#" class="advanced">Advanced settings</a>
+      <button id="startMatch" onclick="startMatch()" disabled>Start match</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav Bar (non-functional for now) -->
+  <footer>
+    <div class="nav">
+      <div>🏏<br>New Match</div>
+      <div>👥<br>Teams</div>
+      <div>📜<br>History</div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

@@ -1,35 +1,33 @@
 function checkForm() {
-    const host = document.getElementById('hostTeam').value.trim();
-    const visitor = document.getElementById('visitorTeam').value.trim();
-    const overs = parseInt(document.getElementById('overs').value);
-    const tossWinner = document.querySelector('input[name="tossWinner"]:checked');
-    const optedTo = document.querySelector('input[name="optedTo"]:checked');
-
-    const startBtn = document.getElementById("startButton");
-
-    if (host && visitor && overs >= 1 && overs <= 50 && tossWinner && optedTo) {
-        startBtn.disabled = false;
-        startBtn.classList.add("enabled");
+    const a = document.getElementById("teamA").value.trim();
+    const b = document.getElementById("teamB").value.trim();
+    const overs = parseInt(document.getElementById("overs").value);
+    const toss = document.querySelector('input[name="toss"]:checked');
+    const opt = document.querySelector('input[name="opt"]:checked');
+  
+    const btn = document.getElementById("startMatch");
+  
+    if (a && b && toss && opt && overs >= 1 && overs <= 50) {
+      btn.disabled = false;
+      btn.classList.add("enabled");
     } else {
-        startBtn.disabled = true;
-        startBtn.classList.remove("enabled");
+      btn.disabled = true;
+      btn.classList.remove("enabled");
     }
-}
-
-function startMatch() {
-    const host = document.getElementById('hostTeam').value.trim();
-    const visitor = document.getElementById('visitorTeam').value.trim();
-    const overs = parseInt(document.getElementById('overs').value);
-    const tossWinner = document.querySelector('input[name="tossWinner"]:checked').value;
-    const optedTo = document.querySelector('input[name="optedTo"]:checked').value;
-
-    // Save to localStorage
-    localStorage.setItem("hostTeam", host);
-    localStorage.setItem("visitorTeam", visitor);
+  }
+  
+  function startMatch() {
+    const a = document.getElementById("teamA").value.trim();
+    const b = document.getElementById("teamB").value.trim();
+    const overs = parseInt(document.getElementById("overs").value);
+    const toss = document.querySelector('input[name="toss"]:checked').value;
+    const opt = document.querySelector('input[name="opt"]:checked').value;
+  
+    localStorage.setItem("teamA", a);
+    localStorage.setItem("teamB", b);
     localStorage.setItem("overs", overs);
-    localStorage.setItem("tossWinner", tossWinner);
-    localStorage.setItem("optedTo", optedTo);
-
-    // Go to next page
-    window.location.href = "player_setup.html";  // (you'll create this next)
-}
+    localStorage.setItem("tossWinner", toss);
+    localStorage.setItem("optedTo", opt);
+  
+    window.location.href = "player_setup.html";  // next page
+  }
