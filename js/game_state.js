@@ -1,65 +1,44 @@
 // game_state.js
-const STORAGE_KEY = 'cricket_match_data';
-const EXPIRY_DAYS = 3;
+const STORAGE_KEY = 'cricketApp.matchState';
+const EXPIRY_KEY = 'cricketApp.expiry';
 
 const GameState = {
-  data: {
-    teams: ["Team A", "Team B"],
-    innings: 1,
-    oversPerInnings: 2,
-    currentOver: [],
-    balls: 0,
-    maxBalls: 12, // 2 overs * 6 balls
-    score: [0, 0],
-    wickets: [0, 0],
-    batsmen: [[], []], // Each innings
-    bowlers: [[], []],
-    striker: null,
-    nonStriker: null,
-    currentBowler: null,
-    overs: [[], []],
-    summary: [],
-    winner: null,
-    lastAction: null,
-    createdAt: Date.now()
-  },
+  save(state) {
+    const now = new Date();
+    const expiryDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
 
-  save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(EXPIRY_KEY, expiryDate.toISOString());
   },
 
   load() {
+    const expiry = localStorage.getItem(EXPIRY_KEY);
+    const now = new Date();
+
+    if (expiry && new Date(expiry) < now) {
+      console.log("Match data expired. Clearing saved state.");
+      this.clear();
+      return null;
+    }
+
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      const age = (Date.now() - parsed.createdAt) / (1000 * 60 * 60 * 24);
-      if (age <= EXPIRY_DAYS) {
-        this.data = parsed;
-      } else {
-        this.clear();
-      }
+    if (!saved) return null;
+
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error("Failed to parse saved match state:", e);
+      this.clear();
+      return null;
     }
   },
 
   clear() {
     localStorage.removeItem(STORAGE_KEY);
-    this.data = {
-      ...this.data,
-      createdAt: Date.now()
-    };
+    localStorage.removeItem(EXPIRY_KEY);
+  },
+
+  exists() {
+    return !!localStorage.getItem(STORAGE_KEY);
   }
 };
-
-GameState.load();
-
-export let gameState = {
-    striker: null,
-    nonStriker: null,
-    batsmenStats: {},
-    overs: [],
-    isFirstInnings: true,
-    targetScore: 0,
-    team1: '',
-    team2: '',
-    matchStartedAt: new Date().getTime()
-  };
