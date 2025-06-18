@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="cricketApp" ng-controller="MatchController">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Scorer</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+  <style>
+    body {
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: #2d7a2d;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .container-custom {
+      max-width: 500px;
+      margin: 20px auto 80px;
+      padding: 0 10px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ccc;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+
+    .btn-start {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+    }
+
+    @media (max-width: 480px) {
+      .section-card {
+        padding: 16px;
+      }
+      .btn-start {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><strong>Cricket</strong> Scorer</h1>
+</header>
+
+<div class="container-custom">
+
+  <!-- 🟢 Striker, Non-Striker and Bowler Section -->
+  <div class="section-card">
+   <h3 style="color: green;">Players Setup</h3>
+    <div class="mb-3">
+      <label for="strikerName" class="form-label">Striker*</label>
+      <input type="text" class="form-control" id="strikerName" ng-model="strikerName">
+    </div>
+    <div class="mb-3">
+      <label for="nonStrikerName" class="form-label">Non-Striker</label>
+      <input type="text" class="form-control" id="nonStrikerName" ng-model="nonStrikerName">
+    </div>
+   </div> 
+   <div class="section-card"> 
+    <div class="mb-3">
+      <label for="bowlerName" class="form-label">Opening Bowler</label>
+      <input type="text" class="form-control" id="bowlerName" ng-model="bowlerName">
+    </div>
+  </div>
+
+  <!-- 🟣 Start Match Button -->
+  <button type="button" class="btn btn-success btn-start" ng-disabled="!isValid()" ng-click="startMatch()">
+    Start Match
+  </button>
+
+</div>
+
+<!-- 🔻 Bottom Footer Nav -->
+<footer>
+  <div class="footer-nav text-center">
+    <div>🏏<br>New Match</div>
+    <div>👥<br>Teams</div>
+    <div>📜<br>History</div>
+  </div>
+</footer>
+
+<!-- AngularJS Logic -->
+<script>
+  angular.module('cricketApp', [])
+    .controller('MatchController', function($scope) {
+      $scope.strikerName = '';
+      $scope.nonStrikerName = '';
+      $scope.bowlerName = '';
+
+      // This function checks if all the required fields are filled
+      $scope.isValid = function() {
+        return $scope.strikerName && $scope.nonStrikerName && $scope.bowlerName;
+      };
+
+      // Function to start the match and store player names in localStorage
+      $scope.startMatch = function() {
+        // Save the names in localStorage
+        localStorage.setItem('strikerName', $scope.strikerName);
+        localStorage.setItem('nonStrikerName', $scope.nonStrikerName);
+        localStorage.setItem('bowlerName', $scope.bowlerName);
+
+        // Redirect to the scoring page
+        window.location.href = 'scoring.html';
+      };
+    });
+</script>
+
+</body>
+</html>
