@@ -1,164 +1,289 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="cricketApp">
+<html lang="en" ng-app="cricketApp" ng-controller="ScoringController">
 <head>
-  <meta charset="UTF-8" />
-  <title>Cricket Scoring</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="css/style.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scoring</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
   <style>
     body {
-      background-color: #f8f9fa;
+      background: #f2f2f2;
     }
-    .scoreboard {
-      background: #fff;
+
+    header {
+      background-color: #2d7a2d;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 10px;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #ccc;
-      margin-top: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
+    .scoreboard {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .table th, .table td {
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .checkbox-group label {
+      margin-right: 10px;
+    }
+
     .btn-score {
-      min-width: 60px;
-      margin-bottom: 10px;
+      width: 60px;
+      height: 60px;
+      font-size: 20px;
+      border-radius: 50%;
+      margin: 6px;
     }
-    .over-display {
-      font-family: monospace;
+
+    .footer-btn {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
-<body ng-controller="ScoringController as ctrl">
-  <div class="container">
-    <h2 class="text-center mt-3">Live Match: {{ ctrl.match.teamA }} vs {{ ctrl.match.teamB }}</h2>
+<body>
 
-    <div class="scoreboard mt-4">
-      <h4>Score: {{ ctrl.totalRuns }} / {{ ctrl.wickets }}</h4>
-      <p>Overs: {{ ctrl.oversBowled }} / {{ ctrl.totalOvers }}</p>
-      <p>Current Over: <span class="over-display">[ {{ ctrl.currentOver.join(", ") }} ]</span></p>
+<header>
+  <h4>{{teamA}} vs {{teamB}}</h4>
+</header>
 
-      <hr />
-      <div class="row">
-        <div class="col-6">
-          <p>Striker: <strong>{{ ctrl.striker }}<span ng-if="ctrl.onStrike === 'striker'">*</span></strong></p>
-          <p>Non-Striker: <strong>{{ ctrl.nonStriker }}<span ng-if="ctrl.onStrike === 'nonStriker'">*</span></strong></p>
-        </div>
-        <div class="col-6 text-end">
-          <p>Bowler: <strong>{{ ctrl.bowler }}</strong></p>
-          <p>Economy: {{ ctrl.economy | number:2 }}</p>
-        </div>
-      </div>
+<div class="container mt-3" ng-init="initMatch()">
 
-      <hr />
-      <div class="text-center">
-        <h5>Enter Ball Outcome</h5>
-        <div class="btn-group flex-wrap">
-          <button class="btn btn-secondary btn-score" ng-click="ctrl.addScore(0)">0</button>
-          <button class="btn btn-primary btn-score" ng-click="ctrl.addScore(1)">1</button>
-          <button class="btn btn-primary btn-score" ng-click="ctrl.addScore(2)">2</button>
-          <button class="btn btn-primary btn-score" ng-click="ctrl.addScore(3)">3</button>
-          <button class="btn btn-success btn-score" ng-click="ctrl.addScore(4)">4</button>
-          <button class="btn btn-success btn-score" ng-click="ctrl.addScore(5)">5</button>
-          <button class="btn btn-success btn-score" ng-click="ctrl.addScore(6)">6</button>
-          <button class="btn btn-warning btn-score" ng-click="ctrl.addExtra('wd')">wd</button>
-          <button class="btn btn-warning btn-score" ng-click="ctrl.addExtra('nb')">nb</button>
-          <button class="btn btn-danger btn-score" ng-click="ctrl.recordWicket()">Wk</button>
-          <button class="btn btn-dark btn-score" ng-click="ctrl.undo()">Undo</button>
-        </div>
-        <div class="mt-3">
-          <button class="btn btn-outline-info me-2" ng-click="ctrl.endOver()">End Over</button>
-          <button class="btn btn-outline-danger" ng-click="ctrl.confirmEndInnings()">End Innings</button>
-        </div>
-      </div>
+  <!-- Match Score Display -->
+  <div class="section-card text-center">
+    <div class="scoreboard">
+      {{battingTeam}}, 1st inning <br>
+      {{score}} - {{wickets}} ({{overs}}.{{balls}})
+    </div>
+    <div>CRR: {{calculateCRR()}}</div>
+  </div>
+
+  <!-- Batsman/Bowler Info -->
+  <div class="section-card">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Batsman</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{strikerName}}*</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td>
+        </tr>
+        <tr>
+          <td>{{nonStrikerName}}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="table table-sm">
+      <thead>
+        <tr><th>Bowler</th><th>O</th><th>M</th><th>R</th><th>W</th><th>ER</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{bowlerName}}</td><td>0.0</td><td>0</td><td>0</td><td>0</td><td>0.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-card">
+    <div class="over-log">
+      <strong>This over:</strong> {{currentOver.join(', ')}}
     </div>
   </div>
 
-  <!-- End Innings Confirmation -->
-  <div class="modal fade" id="endInningsModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">End First Innings</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to end the first innings?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button class="btn btn-danger" ng-click="ctrl.endInnings()">Yes, End Innings</button>
-        </div>
+  <!-- Checkboxes -->
+  <div class="section-card">
+    <div class="checkbox-group mb-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" ng-model="extras.wide" id="wide">
+        <label class="form-check-label" for="wide">Wide</label>
       </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" ng-model="extras.noBall" id="noBall">
+        <label class="form-check-label" for="noBall">No Ball</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" ng-model="extras.byes" id="byes">
+        <label class="form-check-label" for="byes">Byes</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" ng-model="extras.legByes" id="legByes">
+        <label class="form-check-label" for="legByes">Leg Byes</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" ng-model="extras.wicket" id="wicket">
+        <label class="form-check-label" for="wicket">Wicket</label>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3">
+      <button class="btn btn-danger" ng-click="retireBatsman()">Retire</button>
+      <button class="btn btn-warning" ng-click="swapBatsman()">Swap Batsman</button>
     </div>
   </div>
 
-  <!-- Bootstrap + Angular -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-
-  <!-- Game JS Hooks (next steps) -->
-  <script src="assets/js/game_state.js"></script>
-  <script src="assets/js/scoring_logic.js"></script>
-  <script src="assets/js/ui_manager.js"></script>
-  <script src="assets/js/summary_generator.js"></script>
-  <script src="assets/js/pdf-export.js"></script>
-
-  <!-- Main App Logic -->
-  <script src="assets/js/app.js"></script>
-
-  <nav class="nav-footer d-flex justify-content-around py-2">
-    <a href="index.html" class="text-dark text-decoration-none text-center">
-      <div>🏠<br><small>Home</small></div>
-    </a>
-    <a href="scoring.html" class="text-dark text-decoration-none text-center">
-      <div>✍️<br><small>Score</small></div>
-    </a>
-    <a href="match_history.html" class="text-dark text-decoration-none text-center">
-      <div>📜<br><small>History</small></div>
-    </a>
-    <a href="match_summary.html" class="text-dark text-decoration-none text-center">
-      <div>📊<br><small>Summary</small></div>
-    </a>
-  </nav>
-
-  <!-- Next Bowler Modal -->
-  <div class="modal fade" id="nextBowlerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content p-3">
-        <h5>New Bowler</h5>
-        <input type="text" id="newBowlerName" class="form-control" placeholder="Enter new bowler name" />
-        <div class="text-end mt-3">
-          <button class="btn btn-primary" onclick="uiManager.confirmNextBowler()">Confirm</button>
-        </div>
-      </div>
+  <!-- Score Buttons -->
+  <div class="section-card text-center">
+    <div class="d-flex flex-wrap justify-content-center">
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(0)">0</button>
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(1)">1</button>
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(2)">2</button>
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(3)">3</button>
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(4)">4</button>
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(5)">5</button>
+      <button class="btn btn-outline-success btn-score" ng-click="scoreRun(6)">6</button>
+      <button class="btn btn-outline-secondary btn-score" ng-click="moreOptions()">...</button>
     </div>
   </div>
-  
-  <!-- Wicket Modal -->
-  <div class="modal fade" id="wicketModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content p-3">
-        <h5>Wicket Details</h5>
-        <label class="form-label">Who got out?</label>
-        <div>
-          <input type="radio" name="outPlayer" value="striker" checked /> Striker<br />
-          <input type="radio" name="outPlayer" value="nonStriker" /> Non-Striker
-        </div>
-        <input type="text" id="nextBatsmanName" class="form-control mt-3" placeholder="Next batsman name" />
-        <div class="text-end mt-3">
-          <button class="btn btn-danger" onclick="uiManager.confirmWicket()">Continue</button>
-        </div>
-      </div>
-    </div>
+
+  <!-- Utility Buttons -->
+  <div class="section-card">
+    <button class="btn btn-outline-danger footer-btn" ng-click="undoLastBall()">Undo</button>
+    <button class="btn btn-outline-primary footer-btn" ng-click="showPartnerships()">Partnerships</button>
+    <button class="btn btn-outline-info footer-btn" ng-click="addExtras()">Extras</button>
   </div>
-  <!-- Insert here -->
-<div class="modal fade" id="nextBowlerModal" ...>...</div>
-<div class="modal fade" id="wicketModal" ...>...</div>
-<!-- End -->
-<div id="teamScore">0/0</div>
-<div id="oversBowled">0.0</div>
-<div id="strikerInfo">-</div>
-<div id="nonStrikerInfo">-</div>
-<div id="bowlerInfo">-</div>
-<div id="thisOverEvents" class="d-flex flex-wrap"></div>
+
+</div>
+
+<script>
+  angular.module('cricketApp', [])
+    .controller('ScoringController', function($scope, $interval) {
+      $scope.battingTeam = localStorage.getItem('opted') === 'bat' ? localStorage.getItem('tossWinner') : 
+                           (localStorage.getItem('tossWinner') === localStorage.getItem('teamA') ? localStorage.getItem('teamB') : localStorage.getItem('teamA'));
+      $scope.bowlingTeam = (localStorage.getItem('teamA') === $scope.battingTeam) ? localStorage.getItem('teamB') : localStorage.getItem('teamA');
+      $scope.inning = "1st";
+      $scope.score = 0;
+      $scope.wickets = 0;
+      $scope.overs = 0; // Numeric format for easier calculation
+      $scope.balls = 0; // Track balls separately for overs
+      $scope.runRate = "0.00";
+      $scope.striker = localStorage.getItem('strikerName');
+      $scope.nonStriker = localStorage.getItem('nonStrikerName');
+      $scope.bowler = localStorage.getItem('bowlerName');
+      $scope.currentOver = [];
+      $scope.legalDeliveries = 0;
+      $scope.extras = {
+        wide: false,
+        noBall: false,
+        byes: false,
+        legByes: false,
+        wicket: false
+      };
+
+      // Function to calculate Current Run Rate (CRR)
+      $scope.calculateCRR = function() {
+        return $scope.overs > 0 ? ($scope.score / $scope.overs).toFixed(2) : "0.00";
+      };
+
+      // Function to handle the runs scored on a ball
+      $scope.scoreRun = function(runs) {
+        let symbol = runs.toString();
+
+        if ($scope.extras.wide) symbol = "wd+" + runs;
+        else if ($scope.extras.noBall) symbol = "nb+" + runs;
+        else if ($scope.extras.wicket) symbol = "wk";
+        else if ($scope.extras.byes) symbol = "b+" + runs;
+        else if ($scope.extras.legByes) symbol = "lb+" + runs;
+
+        $scope.currentOver.push(symbol);
+        $scope.score += runs;
+
+        // Handle legal deliveries
+        if (!$scope.extras.wide && !$scope.extras.noBall) {
+          $scope.legalDeliveries += 1;
+        }
+
+        // Reset all extras flags
+        $scope.extras.wide = false;
+        $scope.extras.noBall = false;
+        $scope.extras.byes = false;
+        $scope.extras.legByes = false;
+        $scope.extras.wicket = false;
+
+        // Update overs and balls count
+        if ($scope.legalDeliveries === 6) {
+          // Go to the new bowler page
+          $scope.legalDeliveries = 0;
+          localStorage.setItem('currentOver', JSON.stringify($scope.currentOver));
+          $scope.currentOver = [];
+          $scope.balls = 0;
+          $scope.overs += 1;
+          window.location.href = "new_bowler.html"; // Navigate to new bowler page
+        } else {
+          $scope.balls += 1;
+          if ($scope.balls >= 6) {
+            $scope.overs += 1;
+            $scope.balls = 0;
+          }
+        }
+      };
+
+      // Function to swap the batsmen
+      $scope.swapBatsman = function() {
+        let temp = $scope.striker;
+        $scope.striker = $scope.nonStriker;
+        $scope.nonStriker = temp;
+      };
+
+      // Function to retire a batsman
+      $scope.retireBatsman = function() {
+        alert("Retire logic to be implemented.");
+      };
+
+      // Function to undo the last ball
+      $scope.undoLastBall = function() {
+        if ($scope.currentOver.length > 0) {
+          let removed = $scope.currentOver.pop();
+          if (!removed.includes("wd") && !removed.includes("nb")) {
+            $scope.legalDeliveries -= 1;
+          }
+        }
+      };
+
+      // Function to handle extras
+      $scope.addExtras = function() {
+        alert("More extras coming soon!");
+      };
+
+      // Function to view partnerships
+      $scope.showPartnerships = function() {
+        alert("Partnership view coming soon!");
+      };
+
+      // Periodically update the score (every second)
+      $interval(function() {
+        $scope.$apply();  // Ensure scope gets updated
+      }, 1000); // Update every second
+
+      // On reload from new bowler form
+      const newBowler = localStorage.getItem('newBowler');
+      if (newBowler) {
+        $scope.bowler = newBowler;
+        localStorage.removeItem('newBowler');
+      }
+    });
+</script>
+
+
 </body>
 </html>
