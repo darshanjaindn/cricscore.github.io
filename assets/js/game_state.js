@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const startMatchButton = document.getElementById('startMatch');
   const startNextInningsButton = document.getElementById('startNextInnings');
 
-  const battingTeamName = localStorage.getItem('battingTeam');
-  const bowlingTeamName = localStorage.getItem('bowlingTeam');
+  const battingTeam = localStorage.getItem('battingTeam');
+  const bowlingTeam = localStorage.getItem('bowlingTeam');
 
-  document.getElementById('battingTeamHeader').textContent = battingTeamName || 'Batting Team';
-  document.getElementById('bowlingTeamHeader').textContent = bowlingTeamName || 'Bowling Team';
+  document.getElementById('battingTeamHeader').textContent = battingTeam || 'Batting Team';
+  document.getElementById('bowlingTeamHeader').textContent = bowlingTeam || 'Bowling Team';
 
   function saveInningsData(inningsKey) {
     const striker = strikerInput.value.trim();
@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const inningsData = {};
-    inningsData[battingTeamName] = {
+    inningsData[battingTeam] = {
       batter1: striker,
       batter2: nonStriker
     };
-    inningsData[bowlingTeamName] = {
+    inningsData[bowlingTeam] = {
       bowler: bowler
     };
 
