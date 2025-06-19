@@ -1,24 +1,48 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const battingTeam = localStorage.getItem("battingTeam") || "Batting Team";
-  const bowlingTeam = localStorage.getItem("bowlingTeam") || "Bowling Team";
+document.addEventListener('DOMContentLoaded', function () {
+  const strikerInput = document.getElementById('strikerName');
+  const nonStrikerInput = document.getElementById('nonStrikerName');
+  const bowlerInput = document.getElementById('bowlerName');
+  const startMatchButton = document.getElementById('startMatch');
+  const startNextInningsButton = document.getElementById('startNextInnings');
 
-  document.getElementById("battingTeamName").textContent = "Batting Team: " + battingTeam;
-  document.getElementById("bowlingTeamName").textContent = "Bowling Team: " + bowlingTeam;
-});
+  const battingTeamName = localStorage.getItem('battingTeam');
+  const bowlingTeamName = localStorage.getItem('bowlingTeam');
 
-function startMatch() {
-  const strikerName = document.getElementById("strikerName").value.trim();
-  const nonStrikerName = document.getElementById("nonStrikerName").value.trim();
-  const bowlerName = document.getElementById("bowlerName").value.trim();
+  document.getElementById('battingTeamHeader').textContent = battingTeamName || 'Batting Team';
+  document.getElementById('bowlingTeamHeader').textContent = bowlingTeamName || 'Bowling Team';
 
-  if (!strikerName || !nonStrikerName || !bowlerName) {
-    alert("Please fill in all player names.");
-    return;
+  function saveInningsData(inningsKey) {
+    const striker = strikerInput.value.trim();
+    const nonStriker = nonStrikerInput.value.trim();
+    const bowler = bowlerInput.value.trim();
+
+    if (!striker || !nonStriker || !bowler) {
+      alert('Please fill in all player names.');
+      return;
+    }
+
+    const inningsData = {};
+    inningsData[battingTeamName] = {
+      batter1: striker,
+      batter2: nonStriker
+    };
+    inningsData[bowlingTeamName] = {
+      bowler: bowler
+    };
+
+    localStorage.setItem(inningsKey, JSON.stringify(inningsData));
+    window.location.href = 'scoring.html';
   }
 
-  localStorage.setItem("strikerName", strikerName);
-  localStorage.setItem("nonStrikerName", nonStrikerName);
-  localStorage.setItem("bowlerName", bowlerName);
+  if (startMatchButton) {
+    startMatchButton.addEventListener('click', function () {
+      saveInningsData('innings1');
+    });
+  }
 
-  window.location.href = "scoring.html";
-}
+  if (startNextInningsButton) {
+    startNextInningsButton.addEventListener('click', function () {
+      saveInningsData('innings2');
+    });
+  }
+});
