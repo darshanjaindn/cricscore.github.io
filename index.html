@@ -145,28 +145,45 @@
 <!-- 🧠 AngularJS Logic -->
 <script>
   angular.module('cricketApp', [])
-    .controller('MatchController', function($scope) {
-      $scope.teamA = '';
-      $scope.teamB = '';
-      $scope.overs = null;
-      $scope.tossWinner = '';
-      $scope.opted = '';
+  .controller('MatchController', function($scope) {
+    $scope.teamA = '';
+    $scope.teamB = '';
+    $scope.overs = null;
+    $scope.tossWinner = '';
+    $scope.opted = '';
+    $scope.battingTeam = '';
+    $scope.bowlingTeam = '';
 
-      $scope.isValid = function() {
-        return $scope.teamA && $scope.teamB &&
-               $scope.overs >= 1 && $scope.overs <= 50 &&
-               $scope.tossWinner && $scope.opted;
-      };
+    $scope.isValid = function() {
+      return $scope.teamA && $scope.teamB &&
+             $scope.overs >= 1 && $scope.overs <= 50 &&
+             $scope.tossWinner && $scope.opted;
+    };
 
-      $scope.startMatch = function() {
-        localStorage.setItem('teamA', $scope.teamA);
-        localStorage.setItem('teamB', $scope.teamB);
-        localStorage.setItem('overs', $scope.overs);
-        localStorage.setItem('tossWinner', $scope.tossWinner);
-        localStorage.setItem('opted', $scope.opted);
-        window.location.href = "player_setup.html";
-      };
-    });
+    $scope.startMatch = function() {
+      // Determine batting and bowling teams
+      if ($scope.opted.toLowerCase() === 'bat') {
+        $scope.battingTeam = $scope.tossWinner;
+        $scope.bowlingTeam = ($scope.tossWinner === $scope.teamA) ? $scope.teamB : $scope.teamA;
+      } else if ($scope.opted.toLowerCase() === 'bowl') {
+        $scope.bowlingTeam = $scope.tossWinner;
+        $scope.battingTeam = ($scope.tossWinner === $scope.teamA) ? $scope.teamB : $scope.teamA;
+      }
+
+      // Store all values in localStorage
+      localStorage.setItem('teamA', $scope.teamA);
+      localStorage.setItem('teamB', $scope.teamB);
+      localStorage.setItem('overs', $scope.overs);
+      localStorage.setItem('tossWinner', $scope.tossWinner);
+      localStorage.setItem('opted', $scope.opted);
+      localStorage.setItem('battingTeam', $scope.battingTeam);
+      localStorage.setItem('bowlingTeam', $scope.bowlingTeam);
+
+      // Redirect to next page
+      window.location.href = "player_setup.html";
+    };
+  });
+
 </script>
 
 </body>
