@@ -122,7 +122,8 @@
       $scope.strikerName = '';
       $scope.nonStrikerName = '';
       $scope.bowlerName = '';
-
+	    $scope.battingTeam = localStorage.getItem('battingTeam');
+      $scope.bowlingTeam = localStorage.getItem('bowlingTeam');
       // This function checks if all the required fields are filled
       $scope.isValid = function() {
         return $scope.strikerName && $scope.nonStrikerName && $scope.bowlerName;
