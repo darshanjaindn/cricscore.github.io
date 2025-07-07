@@ -84,7 +84,7 @@
           </thead>
           <tbody>
             <tr>
-              <td id="strikerName">Striker*</td>
+              <td id="strikerName"></td>
               <td id="strikerRuns">0</td>
               <td id="strikerBalls">0</td>
               <td id="striker4">0</td>
@@ -92,7 +92,7 @@
               <td id="strikerSR">0.00</td>
             </tr>
             <tr>
-              <td id="nonStrikerName">Non-striker</td>
+              <td id="nonStrikerName"></td>
               <td id="nonStrikerRuns">0</td>
               <td id="nonStrikerBalls">0</td>
               <td id="nonStriker4">0</td>
@@ -110,7 +110,7 @@
           </thead>
           <tbody>
             <tr>
-              <td id="bowlerName">Bowler</td>
+              <td id="bowlerName"></td>
               <td id="bowlerOvers">0.0</td>
               <td id="bowlerMaiden">0</td>
               <td id="bowlerRuns">0</td>
@@ -133,16 +133,16 @@
             <input class="form-check-input" type="checkbox" id="wide"><label class="form-check-label" for="wide">Wide</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="noBall"><label class="form-check-label" for="noBall">No Ball</label>
+            <input class="form-check-input" type="checkbox" id="noBall"><label class="form-check-label" for="noBall">NB</label>
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="checkbox" id="byes"><label class="form-check-label" for="byes">Byes</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="legByes"><label class="form-check-label" for="legByes">Leg Byes</label>
+            <input class="form-check-input" type="checkbox" id="legByes"><label class="form-check-label" for="legByes">LB</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="wicket"><label class="form-check-label" for="wicket">Wicket</label>
+            <input class="form-check-input" type="checkbox" id="wicket"><label class="form-check-label" for="wicket">Wk</label>
           </div>
         </div>
         <div class="d-flex justify-content-between mb-3">
@@ -175,6 +175,25 @@
     </div>
   </div>
 
+  <!-- Remove Later -->
+  <!-- Clear Storage Button -->
+  <button id="clearStorageBtn" style="position: fixed; bottom: 10px; right: 10px; padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
+    Clear LocalStorage (Dev)
+  </button>
+
+  <script>
+    document.getElementById('clearStorageBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all localStorage data? This cannot be undone.')) {
+        localStorage.clear();
+        alert('LocalStorage cleared. Reloading page.');
+        window.location.reload();
+      }
+    });
+  </script>
+
+  
+  <script src="assets/js/game_state.js"></script>
   <script src="assets/js/scoring_logic.js"></script>
+
 </body>
 </html>

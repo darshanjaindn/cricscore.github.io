@@ -7,10 +7,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const battingTeam = localStorage.getItem('battingTeam');
   const bowlingTeam = localStorage.getItem('bowlingTeam');
+  const inningsData = {};
 
-  const startButton = document.getElementById('startMatch');
-  document.getElementById('battingTeamName').textContent = battingTeam || 'Batting Team';
-  document.getElementById('bowlingTeamName').textContent = bowlingTeam || 'Bowling Team';
+  const battingTeamEl = document.getElementById('battingTeam');
+  const bowlingTeamEl = document.getElementById('bowlingTeam');
+
+  if (battingTeamEl) {
+    battingTeamEl.textContent = battingTeam || 'Batting Team';
+  }
+
+  if (bowlingTeamEl) {
+    bowlingTeamEl.textContent = bowlingTeam || 'Bowling Team';
+  }
 
   function saveInningsData(inningsKey) {
     const striker = strikerInput.value.trim();
@@ -21,7 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
       alert('Please fill in all player names.');
       return;
     }
+
+    localStorage.setItem("current_strikerName", striker);
+    localStorage.setItem("current_nonStrikerName", nonStriker);
+    localStorage.setItem("current_bowlerName", bowler);
     localStorage.setItem("current_innings", inningsKey);
+
     inningsData[battingTeam] = {
       batter1: striker,
       batter2: nonStriker
@@ -29,8 +42,10 @@ document.addEventListener('DOMContentLoaded', function () {
     inningsData[bowlingTeam] = {
       bowler: bowler
     };
-    localStorage.setItem()
+
     localStorage.setItem(inningsKey, JSON.stringify(inningsData));
+
+    // ✅ Redirect after saving
     window.location.href = 'scoring.html';
   }
 
@@ -45,9 +60,4 @@ document.addEventListener('DOMContentLoaded', function () {
       saveInningsData('innings2');
     });
   }
-  
-  startButton.addEventListener('click', function () {
-    window.location.href = 'scoring.html';
-  });
-  
 });
