@@ -59,7 +59,14 @@ const teamA = localStorage.getItem("teamA") || "Team A";
       document.getElementById("bowlerER").innerText = bowlerER;
 
       // Over log
-      document.getElementById("overLog").innerHTML = `<strong>This over:</strong> ${overLog.map(r => `<span>${r}</span>`).join("")}`;
+      document.getElementById("overLog").innerHTML = `<strong>This over:</strong> ${overLog.map(ball => {
+        let className = "default-ball"; // normal runs
+        if (ball.startsWith("wk")) className = "wicket-ball";
+        else if (ball.startsWith("wd") || ball.startsWith("nb") || ball.startsWith("b") || ball.startsWith("lb")) className = "extra-ball";
+        else if (ball === "4" || ball === "6") className = "boundary-ball";
+      
+        return `<span class="${className}">${ball}</span>`;
+      }).join(" ")}`;      
     }
 
     // Calculate Strike Rate
@@ -72,55 +79,124 @@ const teamA = localStorage.getItem("teamA") || "Team A";
       const wide = document.getElementById("wide").checked;
       const noBall = document.getElementById("noBall").checked;
       const wicket = document.getElementById("wicket").checked;
-
-      let ballCounted = !wide && !noBall;
+      const byes = document.getElementById("byes")?.checked;
+      const legByes = document.getElementById("legByes")?.checked;
+    
+      const isExtra = wide || noBall || byes || legByes;
+      const ballCounted = !wide && !noBall;
       let runText = runs.toString();
-
+    
+      // Format for over log
       if (wide) runText = `wd+${runs}`;
-      if (noBall) runText = `nb+${runs}`;
+      else if (noBall) runText = `nb+${runs}`;
+      else if (byes) runText = `b+${runs}`;
+      else if (legByes) runText = `lb+${runs}`;
+      else if (wicket) runText = runs > 0 ? `wk+${runs}` : `wk`;
+    
+      // ✅ WICKET CASE
       if (wicket) {
-        runText = "wk";
         wickets++;
-        if (ballCounted) {
-          balls++;
-          bowlerStats[bowler].balls++;
-        }
-        bowlerStats[bowler].wickets++;
-      } else {
         score += runs;
-        if (!batterStats[striker]) {
-          batterStats[striker] = { runs: 0, balls: 0, fours: 0, sixes: 0 };
+    
+        if (!wide && !noBall && !byes && !legByes) {
+          batterStats[striker] = batterStats[striker] || { runs: 0, balls: 0, fours: 0, sixes: 0 };
+          batterStats[striker].runs += runs;
+          if (runs === 4) batterStats[striker].fours++;
+          if (runs === 6) batterStats[striker].sixes++;
+          if (ballCounted) {
+            batterStats[striker].balls++;
+          }
         }
-        batterStats[striker].runs += runs;
+    
         if (ballCounted) {
-          batterStats[striker].balls++;
-          bowlerStats[bowler].balls++;
           balls++;
+          bowlerStats[bowler].balls++;
         }
+    
+        bowlerStats[bowler].runs += runs;
+        bowlerStats[bowler].wickets++;
+    
+        overLog.push(runText);
+        persistMatchState();
+    
+        localStorage.setItem("lastOverStriker", striker);
+        localStorage.setItem("lastOverNonStriker", nonStriker);
+    
+        window.location.href = "next_batsmen.html";
+        return;
+      }
+    
+      // ✅ EXTRAS CASE
+      if (wide || noBall || byes || legByes) {
+        score += runs + (wide || noBall ? 1 : 0); // wd or nb gives 1 extra base run
+    
+        if (wide || noBall) {
+          bowlerStats[bowler].runs += runs + 1;
+        } else {
+          bowlerStats[bowler].runs += runs;
+        }
+    
+        if (ballCounted) {
+          balls++;
+          bowlerStats[bowler].balls++;
+        }
+    
+        overLog.push(runText);
+
+        // ✅ Swap strike if byes or leg byes and odd runs
+        if ((byes || legByes) && runs % 2 === 1) {
+          swapBatsman(false);
+        }
+      }
+      // ✅ NORMAL RUN CASE
+      else {
+        score += runs;
+        batterStats[striker] = batterStats[striker] || { runs: 0, balls: 0, fours: 0, sixes: 0 };
+        batterStats[striker].runs += runs;
+    
         if (runs === 4) batterStats[striker].fours++;
         if (runs === 6) batterStats[striker].sixes++;
+    
+        if (ballCounted) {
+          balls++;
+          batterStats[striker].balls++;
+          bowlerStats[bowler].balls++;
+        }
+    
         bowlerStats[bowler].runs += runs;
-        if (runs % 2 === 1) swapBatsman(false); // swap strike only on odd runs
+    
+        if (runs % 2 === 1) swapBatsman(false);
+    
+        overLog.push(runText);
       }
+    
+      // Count number of legal balls in this over
+      const legalBallsInOver = overLog.filter(log => {
+        return !log.startsWith("wd") && !log.startsWith("nb");
+      }).length;
 
-      overLog.push(runText);
-      
-      if (overLog.length === 6) {
+      // ✅ OVER COMPLETED — 6 legal balls bowled
+      if (legalBallsInOver === 6) {
+        swapBatsman(false);
         saveInningsToLocalStorage();
         localStorage.setItem("lastOverStriker", striker);
         localStorage.setItem("lastOverNonStriker", nonStriker);
-        localStorage.setItem("newOverStarted", "true"); // ✅ Flag to reset overLog
+        localStorage.setItem("newOverStarted", "true");
         overLog = [];
-        // Persist after scoring
+
         persistMatchState();
-        window.location.href = "select_bowler.html"; // redirect to input next bowler
+        window.location.href = "next_bowler.html";
+        return;
       }
-      
 
+    
+      persistMatchState();
       updateScoreDisplay();
+    
+      // Reset checkboxes
       document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-    }
-
+    }       
+    
     // Persist Match Score
     function persistMatchState() {
       localStorage.setItem("match_score", score);
@@ -188,64 +264,49 @@ const teamA = localStorage.getItem("teamA") || "Team A";
     
       const savedData = JSON.parse(localStorage.getItem("matchData")) || {};
     
-      // Batter stats snapshot
-      const batter1 = {
-        name: striker,
-        score: batterStats[striker].runs,
-        balls: batterStats[striker].balls,
-        "4s": batterStats[striker].fours,
-        "6s": batterStats[striker].sixes,
-        SR: calculateSR(batterStats[striker])
-      };
+      // Initialize team objects
+      if (!savedData[battingTeam]) savedData[battingTeam] = {};
+      if (!savedData[bowlingTeam]) savedData[bowlingTeam] = {};
     
-      const batter2 = {
-        name: nonStriker,
-        score: batterStats[nonStriker].runs,
-        balls: batterStats[nonStriker].balls,
-        "4s": batterStats[nonStriker].fours,
-        "6s": batterStats[nonStriker].sixes,
-        SR: calculateSR(batterStats[nonStriker])
-      };
+      const batters = [striker, nonStriker];
+    
+      // Save/update each batter
+      batters.forEach(batter => {
+        const stats = batterStats[batter];
+        if (!savedData[battingTeam][batter]) {
+          savedData[battingTeam][batter] = {
+            score: 0,
+            balls: 0,
+            "4s": 0,
+            "6s": 0,
+            SR: "0.00"
+          };
+        }
+    
+        savedData[battingTeam][batter].score = stats.runs;
+        savedData[battingTeam][batter].balls = stats.balls;
+        savedData[battingTeam][batter]["4s"] = stats.fours;
+        savedData[battingTeam][batter]["6s"] = stats.sixes;
+        savedData[battingTeam][batter].SR = calculateSR(stats);
+      });
     
       // Current bowler stats
       const currentBowlerStats = bowlerStats[bowler];
     
-      // Initialize innings arrays
-      if (!Array.isArray(savedData[battingTeam])) {
-        savedData[battingTeam] = [];
-      }
-    
-      if (!savedData[bowlingTeam]) {
-        savedData[bowlingTeam] = {};
-      }
-    
-      // Push batter snapshot
-      savedData[battingTeam].push({
-        batter1,
-        batter2
-      });
-    
-      // Handle bowler
+      // Check if bowler already exists
       const bowlerKey = Object.keys(savedData[bowlingTeam]).find(key => savedData[bowlingTeam][key].name === bowler);
+    
       if (bowlerKey) {
         const b = savedData[bowlingTeam][bowlerKey];
-    
-        // Parse existing overs
         const [prevOvers, prevBalls] = b.overs.split('.').map(Number);
         const totalPrevBalls = (prevOvers * 6) + prevBalls;
     
-        // Calculate updated totals
-        const totalBalls = totalPrevBalls + 6; // ✅ One over just completed
-        const newRuns = currentBowlerStats.runs - b.Runs;
-        const newWickets = currentBowlerStats.wickets - b.Wicket;
-    
+        const newTotalBalls = totalPrevBalls + 6; // One over completed
         b.Runs = currentBowlerStats.runs;
         b.Wicket = currentBowlerStats.wickets;
-        b.overs = `${Math.floor(totalBalls / 6)}.${totalBalls % 6}`;
-        b.ER = (b.Runs / (totalBalls / 6)).toFixed(2);
-    
+        b.overs = `${Math.floor(newTotalBalls / 6)}.${newTotalBalls % 6}`;
+        b.ER = (b.Runs / (newTotalBalls / 6)).toFixed(2);
       } else {
-        // New bowler
         const bowlerCount = Object.keys(savedData[bowlingTeam]).length + 1;
         const balls = currentBowlerStats.balls;
         savedData[bowlingTeam][`bowler${bowlerCount}`] = {
@@ -258,14 +319,20 @@ const teamA = localStorage.getItem("teamA") || "Team A";
         };
       }
     
+      // Save back to localStorage
       localStorage.setItem("matchData", JSON.stringify(savedData));
     }
+    
     
     
     
     window.onload = () => {
       loadPersistedMatchState();
     
+      // Reload current striker/non-striker names in case changed from next_batsmen.html
+      striker = localStorage.getItem("current_strikerName") || "Striker";
+      nonStriker = localStorage.getItem("current_nonStrikerName") || "Non-Striker";
+
       // Ensure batter entries exist
       batterStats[striker] = batterStats[striker] || { runs: 0, balls: 0, fours: 0, sixes: 0 };
       batterStats[nonStriker] = batterStats[nonStriker] || { runs: 0, balls: 0, fours: 0, sixes: 0 };
@@ -297,7 +364,13 @@ const teamA = localStorage.getItem("teamA") || "Team A";
           break;
         }
       }
-    
+      
+      // Reset overLog display if new over started
+      if (localStorage.getItem("newOverStarted") === "true") {
+        overLog = [];
+        localStorage.removeItem("newOverStarted");
+      }
+
       updateScoreDisplay();
     };
     
