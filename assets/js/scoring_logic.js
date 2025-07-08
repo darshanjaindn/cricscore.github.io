@@ -144,7 +144,7 @@ const teamA = localStorage.getItem("teamA") || "Team A";
         overLog.push(runText);
 
         // ✅ Swap strike if byes or leg byes and odd runs
-        if ((byes || legByes) && runs % 2 === 1) {
+        if ((byes || legByes || wide || noBall) && runs % 2 === 1) {
           swapBatsman(false);
         }
       }
