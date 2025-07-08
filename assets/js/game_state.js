@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.setItem("current_strikerName", striker);
     localStorage.setItem("current_nonStrikerName", nonStriker);
     localStorage.setItem("current_bowlerName", bowler);
-    localStorage.setItem("current_innings", inningsKey);
+    localStorage.setItem("currentInnings", inningsKey);
 
     inningsData[battingTeam] = {
       batter1: striker,
@@ -49,15 +49,26 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'scoring.html';
   }
 
+  const inningsCompleted = localStorage.getItem("inningsCompleted");
+
   if (startMatchButton) {
-    startMatchButton.addEventListener('click', function () {
-      saveInningsData('innings1');
-    });
+    if (inningsCompleted === "1") {
+      // Set up for 2nd innings
+      startMatchButton.textContent = "Start 2nd Innings";
+      startMatchButton.addEventListener('click', function () {
+        saveInningsData('innings2');
+      });
+    } else {
+      // 1st innings
+      startMatchButton.addEventListener('click', function () {
+        saveInningsData('innings1');
+      });
+    }
   }
 
-  if (startNextInningsButton) {
-    startNextInningsButton.addEventListener('click', function () {
-      saveInningsData('innings2');
-    });
+  if (!strikerInput || !nonStrikerInput || !bowlerInput) {
+    console.error("Missing one or more player input fields.");
+    return;
   }
+
 });

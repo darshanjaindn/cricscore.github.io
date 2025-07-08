@@ -94,48 +94,54 @@
 </footer>
 
 <script>
-  const teamA = localStorage.getItem("teamA") || "Team A";
-  const teamB = localStorage.getItem("teamB") || "Team B";
-  const currentInnings = localStorage.getItem("currentInnings") || "innings1";
-  const battingTeam = currentInnings === "innings1" ? teamA : teamB;
-  document.getElementById("battingTeam").innerText = `${battingTeam} Batting`;
+    const teamA = localStorage.getItem("teamA") || "Team A";
+    const teamB = localStorage.getItem("teamB") || "Team B";
+    const currentInnings = localStorage.getItem("currentInnings") || "innings1";
+    const battingTeam = currentInnings === "innings1" ? teamA : teamB;
+    document.getElementById("battingTeam").innerText = `${battingTeam} Batting`;
 
-  const striker = localStorage.getItem("lastOverStriker") || "Striker";
-  const nonStriker = localStorage.getItem("lastOverNonStriker") || "Non-striker";
+    const striker = localStorage.getItem("lastOverStriker") || "Striker";
+    const nonStriker = localStorage.getItem("lastOverNonStriker") || "Non-striker";
 
-  const optionsDiv = document.getElementById("batsmanOptions");
-  optionsDiv.innerHTML = `
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="outBatsman" value="${striker}" id="outStriker" checked>
-      <label class="form-check-label" for="outStriker">${striker}</label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="outBatsman" value="${nonStriker}" id="outNonStriker">
-      <label class="form-check-label" for="outNonStriker">${nonStriker}</label>
-    </div>
-  `;
+    const optionsDiv = document.getElementById("batsmanOptions");
+    optionsDiv.innerHTML = `
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="outBatsman" value="${striker}" id="outStriker" checked>
+        <label class="form-check-label" for="outStriker">${striker}</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="outBatsman" value="${nonStriker}" id="outNonStriker">
+        <label class="form-check-label" for="outNonStriker">${nonStriker}</label>
+      </div>
+    `;
 
-  function submitNewBatsman() {
-    const selectedOut = document.querySelector('input[name="outBatsman"]:checked').value;
-    const newBatsmanName = document.getElementById("newBatsmanName").value.trim();
+    function submitNewBatsman() {
+        const selectedOut = document.querySelector('input[name="outBatsman"]:checked').value;
+        const newBatsmanName = document.getElementById("newBatsmanName").value.trim();
 
-    if (!newBatsmanName) {
-      alert("Please enter new batsman's name.");
-      return;
+        if (!newBatsmanName) {
+            alert("Please enter new batsman's name.");
+            return;
+        }
+
+        // Update striker/nonStriker based on who got out
+        if (selectedOut === localStorage.getItem("lastOverStriker")) {
+            localStorage.setItem("current_strikerName", newBatsmanName);
+            localStorage.setItem("current_nonStrikerName", nonStriker);
+        } else {
+            localStorage.setItem("current_nonStrikerName", newBatsmanName);
+            localStorage.setItem("current_strikerName", striker);
+        }
+
+        // Check if wicket happened on 6th legal ball to redirect to next bowler page
+        if (localStorage.getItem("overCompletedAfterWicket") === "true") {
+            localStorage.removeItem("overCompletedAfterWicket"); // clear flag
+            window.location.href = "next_bowler.html";
+        } else {
+            // Normal wicket case: back to scoring
+            window.location.href = "scoring.html";
+        }
     }
-
-    // Update striker/nonStriker based on who got out
-    if (selectedOut === localStorage.getItem("lastOverStriker")) {
-      localStorage.setItem("current_strikerName", newBatsmanName);
-      localStorage.setItem("current_nonStrikerName", nonStriker);
-    } else {
-      localStorage.setItem("current_nonStrikerName", newBatsmanName);
-      localStorage.setItem("current_strikerName", striker);
-    }
-
-    // Go back to scoring page
-    window.location.href = "scoring.html";
-  }
 </script>
 
 </body>
