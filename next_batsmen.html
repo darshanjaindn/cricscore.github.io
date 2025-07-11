@@ -115,6 +115,16 @@
       </div>
     `;
 
+    function recordOutBatsman(outBatter) {
+
+        let outBatsmen = JSON.parse(localStorage.getItem("outBatsmen")) || [];
+        if (!outBatsmen.includes(outBatter)) {
+        outBatsmen.push(outBatter);
+        }
+        console.log("PrevOutBatsment: ", outBatter);
+        localStorage.setItem("outBatsmen", JSON.stringify(outBatsmen));
+    }
+
     function submitNewBatsman() {
         const selectedOut = document.querySelector('input[name="outBatsman"]:checked').value;
         const newBatsmanName = document.getElementById("newBatsmanName").value.trim();
@@ -139,7 +149,7 @@
 
         // ✅ Store new batter name separately (optional)
         localStorage.setItem("newBatsman", newBatsmanName);
-        
+        recordOutBatsman(selectedOut);
         // ✅ Update striker/non-striker
         if (selectedOut === localStorage.getItem("current_strikerName")) {
             localStorage.setItem("current_strikerName", newBatsmanName);

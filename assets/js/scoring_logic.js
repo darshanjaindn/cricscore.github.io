@@ -170,6 +170,7 @@ function scoreRun(runs) {
   if (wicket) {
     wickets++;
     score += runs;
+    // Wk + Wd or Wk + Nb Case
     if (!wide && !noBall) {
       batterStats[striker].balls++;
       bowlerStats[bowler].balls++;
@@ -192,15 +193,26 @@ function scoreRun(runs) {
     // 🏁 First check: Did the innings end?
     if (balls >= maxBalls || wickets >= 10) {
       localStorage.setItem("inningsCompleted", "1");
-      startSecondInnings(); // only first→second transition
-      matchEnded = true;    // if using that flag
-      window.location.href = "player_setup.html";
-      return;
+
+      if (currentInnings === "innings1") {
+        endFirstInnings();
+        startSecondInnings();
+        matchEnded = true;
+        localStorage.setItem("postInningsRedirect", "player_setup.html");
+        window.location.href = "record_out.html";
+        return;
+      } else if (currentInnings === "innings2") {
+        // For 2nd innings, go to record_out then call determineMatchWinner
+        localStorage.setItem("postInningsRedirect", "determine_winner.html");
+        window.location.href = "record_out.html";
+        return;
+      }
     }
 
     // 🛑 Next: Did this fall on the last legal ball of the over?
     const legalBallsInOver = overLog.filter(log => !log.startsWith("wd") && !log.startsWith("nb")).length;
     if (legalBallsInOver === 6) {
+      console.log("Over completed..")
       localStorage.setItem("overCompletedAfterWicket", "true");
       localStorage.setItem("newOverStarted", "true");
       overLog = [];
@@ -216,7 +228,6 @@ function scoreRun(runs) {
     window.location.href = "next_batsmen.html";
     return;
   }
-
   // ===== EXTRAS CASE =====
   if (isExtra) {
     score += runs + (wide || noBall ? 1 : 0); // Wide or no ball gives 1 extra
@@ -231,7 +242,7 @@ function scoreRun(runs) {
       balls++;
       bowlerStats[bowler].balls++;
       persistMatchState();
-      checkInningsCompletion()
+      checkInningsCompletion();
       saveInningsToLocalStorage();
     }
 
@@ -554,6 +565,7 @@ function startSecondInnings() {
 
   // Save initial 2nd innings state
   localStorage.setItem("secondInningsStarted", "true");
+  console.log("seting secondInningsStarted - True in StartSecondInnings()...")
   localStorage.setItem("match_score", score);
   localStorage.setItem("match_wickets", wickets);
   localStorage.setItem("match_balls", balls);
@@ -572,7 +584,7 @@ function determineMatchWinner() {
   const teamB = localStorage.getItem("teamB");
 
   const innings1Score = parseInt(localStorage.getItem("innings1_score") || "0", 10);
-  const innings2Score = parseInt(localStorage.getItem("innings2_score") || "0", 10);
+  const innings2Score = parseInt(localStorage.getItem("match_score") || "0", 10);
   const innings2Wickets = parseInt(localStorage.getItem("match_wickets") || "0", 10);
   const wicketsRemaining = 10 - innings2Wickets;
 
@@ -657,6 +669,7 @@ window.onload = () => {
   let currentInnings = localStorage.getItem("currentInnings") || "innings1";
 
   if (currentInnings === "innings2") {
+    console.log("starting 2nd inning on load")
     startSecondInnings();
   } else {
     loadPersistedMatchState();

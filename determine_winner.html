@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finalizing Result</title>
+</head>
+<body>
+  <h3 style="text-align: center; margin-top: 50px;">🏏 Calculating match result...</h3>
+
+  <!-- ✅ Include your scoring logic where determineMatchWinner() is defined -->
+  <script src="assets/js/scoring_logic.js"></script>
+
+  <script>
+    // Ensure the function exists before calling
+    if (typeof determineMatchWinner === "function") {
+      determineMatchWinner();  // This should compute and redirect to match_summary.html
+    } else {
+      console.error("❌ determineMatchWinner() not found in scoring_logic.js");
+      alert("Unable to determine match result. Please try again.");
+    }
+  </script>
+</body>
+</html>

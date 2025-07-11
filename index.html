@@ -134,12 +134,33 @@
   <div class="footer-nav text-center">
     <div>🏏<br>New Match</div>
     <div>👥<br>Teams</div>
-    <div>📜<br>History</div>
+    <div id="matchHistoryList" class="history-list"></div>
   </div>
 </footer>
 
 <!-- JavaScript Logic -->
 <script src="assets/js/match_setup.js"></script>
+<script>
+  function renderHistory() {
+    const history = JSON.parse(localStorage.getItem("matchHistory") || "[]");
+    const listEl = document.getElementById("matchHistoryList");
+    if (history.length === 0) {
+      listEl.innerHTML = "<p>No past matches</p>";
+    } else {
+      listEl.innerHTML = history.map((m, i) => 
+        `<div class="history-item">
+           <strong>${new Date(m.date).toLocaleDateString()}</strong> – ${m.teams} → ${m.result}
+         </div>`
+      ).join("");
+    }
+  }
+  renderHistory();
+</script>
+
+<style>
+  .history-list { padding: 10px; font-size: 0.9em; background: #e9ecef; }
+  .history-item { margin-bottom: 6px; }
+</style>
 
 </body>
 </html>
