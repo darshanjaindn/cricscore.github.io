@@ -99,9 +99,9 @@
     const currentInnings = localStorage.getItem("currentInnings") || "innings1";
     const battingTeam = currentInnings === "innings1" ? teamA : teamB;
     document.getElementById("battingTeam").innerText = `${battingTeam} Batting`;
-
-    const striker = localStorage.getItem("lastOverStriker") || "Striker";
-    const nonStriker = localStorage.getItem("lastOverNonStriker") || "Non-striker";
+    
+    let striker = localStorage.getItem("current_strikerName") || "Striker";
+    let nonStriker = localStorage.getItem("current_nonStrikerName") || "Non-striker";
 
     const optionsDiv = document.getElementById("batsmanOptions");
     optionsDiv.innerHTML = `
@@ -124,8 +124,24 @@
             return;
         }
 
-        // Update striker/nonStriker based on who got out
-        if (selectedOut === localStorage.getItem("lastOverStriker")) {
+        // Load batterOrder from localStorage or initialize
+        let batterOrder = JSON.parse(localStorage.getItem("batterOrder")) || [];
+        // Check for duplicate batter
+        if (batterOrder.includes(newBatsmanName)) {
+            alert("This player has already batted. Please enter a new, unique name.");
+            return;
+        }
+
+        // ✅ Add new batter to batterOrder
+        batterOrder.push(newBatsmanName);
+        
+        localStorage.setItem("batterOrder", JSON.stringify(batterOrder));
+
+        // ✅ Store new batter name separately (optional)
+        localStorage.setItem("newBatsman", newBatsmanName);
+        
+        // ✅ Update striker/non-striker
+        if (selectedOut === localStorage.getItem("current_strikerName")) {
             localStorage.setItem("current_strikerName", newBatsmanName);
             localStorage.setItem("current_nonStrikerName", nonStriker);
         } else {
@@ -133,15 +149,15 @@
             localStorage.setItem("current_strikerName", striker);
         }
 
-        // Check if wicket happened on 6th legal ball to redirect to next bowler page
+        // ✅ Handle redirection after wicket
         if (localStorage.getItem("overCompletedAfterWicket") === "true") {
-            localStorage.removeItem("overCompletedAfterWicket"); // clear flag
+            localStorage.removeItem("overCompletedAfterWicket");
             window.location.href = "next_bowler.html";
         } else {
-            // Normal wicket case: back to scoring
             window.location.href = "scoring.html";
         }
-    }
+}
+
 </script>
 
 </body>

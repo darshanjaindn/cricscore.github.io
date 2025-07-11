@@ -35,16 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.setItem("current_bowlerName", bowler);
     localStorage.setItem("currentInnings", inningsKey);
 
-    inningsData[battingTeam] = {
-      batter1: striker,
-      batter2: nonStriker
-    };
-    inningsData[bowlingTeam] = {
-      bowler: bowler
-    };
-
-    localStorage.setItem(inningsKey, JSON.stringify(inningsData));
-
+    // Initial of match status
+    // Add this near your other global variable initializations
+    let batterOrder = [];
+    // Initialize batting order with openers (only if not already present)
+    if (!batterOrder.includes(striker)) {
+      batterOrder.push(striker);
+    }
+    if (!batterOrder.includes(nonStriker)) {
+      batterOrder.push(nonStriker);
+    }
+    localStorage.setItem("batterOrder", JSON.stringify(batterOrder));
     // ✅ Redirect after saving
     window.location.href = 'scoring.html';
   }
