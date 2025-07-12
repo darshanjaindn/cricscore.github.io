@@ -46,11 +46,28 @@
     }
 
     .footer-nav {
-      display: flex;
-      justify-content: space-around;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #2d7a2d;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
       padding: 10px 0;
-      font-size: 14px;
+      cursor: pointer;
+      z-index: 1000;
+      border-top: 1px solid #255f25;
+      transition: background-color 0.3s ease;
     }
+
+    .footer-nav:hover {
+      background-color: #256f25;
+    }
+
+    .footer-nav div {
+      line-height: 1.2;
+    }
+
 
     .btn-start {
       width: 100%;
@@ -129,38 +146,9 @@
 
 </div>
 
-<!-- 🔻 Bottom Footer Nav -->
-<footer>
-  <div class="footer-nav text-center">
-    <div>🏏<br>New Match</div>
-    <div>👥<br>Teams</div>
-    <div id="matchHistoryList" class="history-list"></div>
-  </div>
-</footer>
-
 <!-- JavaScript Logic -->
-<script src="assets/js/match_setup.js"></script>
-<script>
-  function renderHistory() {
-    const history = JSON.parse(localStorage.getItem("matchHistory") || "[]");
-    const listEl = document.getElementById("matchHistoryList");
-    if (history.length === 0) {
-      listEl.innerHTML = "<p>No past matches</p>";
-    } else {
-      listEl.innerHTML = history.map((m, i) => 
-        `<div class="history-item">
-           <strong>${new Date(m.date).toLocaleDateString()}</strong> – ${m.teams} → ${m.result}
-         </div>`
-      ).join("");
-    }
-  }
-  renderHistory();
-</script>
 
-<style>
-  .history-list { padding: 10px; font-size: 0.9em; background: #e9ecef; }
-  .history-item { margin-bottom: 6px; }
-</style>
+<script src="assets/js/match_setup.js"></script>
 
 </body>
 </html>

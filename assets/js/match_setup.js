@@ -34,7 +34,6 @@ function startMatch() {
   
     window.location.href = "player_setup.html";
   }
-  
   // Update toss labels dynamically
   document.addEventListener("DOMContentLoaded", function() {
     const teamAInput = document.getElementById("teamA");
@@ -50,4 +49,13 @@ function startMatch() {
     teamAInput.addEventListener("input", updateLabels);
     teamBInput.addEventListener("input", updateLabels);
   });
+
+function startNewMatch() {
+  const confirmStart = confirm("Are you sure you want to start a new match? All current data will be lost.");
+  if (confirmStart) {
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
+}
+  
   

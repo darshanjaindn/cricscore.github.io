@@ -39,6 +39,10 @@
       margin: 0.5em 0;
     }
 
+    h1 {
+        font-size: 32px;
+    }
+
     h3 {
       color: #2d7a2d;
       margin-top: 1em;
@@ -84,63 +88,92 @@
     }
 
     button:hover {
-        background-color: #2d7a2d; /* No color change on hover */
+      background-color: #2d7a2d; /* No color change on hover */
     }
 
     @media print {
-        body {
-            background: #fff;
-            font-size: 12px;
-            margin: 0;
-            padding: 0;
-        }
+      body {
+        background: #fff;
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+      }
 
-        header {
-            padding: 10px 5px;
-            font-size: 14px;
-            background: #255f25;
-            color: #fff;
-            text-align: center;
-        }
+      header {
+        padding: 10px 5px;
+        font-size: 14px;
+        background: #255f25;
+        color: #fff;
+        text-align: center;
+      }
 
-        .container {
-            margin: 0;
-            padding: 0;
-            max-width: 100%;
-        }
+      .container {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+      }
 
-        .section-card {
-            padding: 10px;
-            margin-bottom: 10px;
-            box-shadow: none;
-            border: 1px solid #ccc;
-            border-radius: 0;
-        }
+      .section-card {
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        border-radius: 0;
+      }
 
-        h1, h2, h3 {
-            margin: 6px 0;
-            font-size: 14px;
-        }
+      h1 {
+        margin: 6px 0;
+        font-size: 32px;
+        color: #000 !important;
+      }
 
-        table {
-            font-size: 11px;
-            margin: 6px 0;
-        }
+      h2 {
+        margin: 6px 0;
+        font-size: 18px;
+        color: #000 !important;
+      }
 
-        th, td {
-            padding: 4px 6px;
-        }
+      h3 {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #2d7a2d !important;
+      }
 
-        .buttons {
-            display: none !important;
-        }
+      table {
+        font-size: 11px;
+        margin: 6px 0;
+        border-collapse: collapse;
+        width: 100%;
+      }
 
-        .winner {
-            font-size: 14px;
-            color: #000;
-            margin: 8px 0;
-            background-color: #2d7a2d;
-        }
+      th {
+        background-color: #e6f2e6 !important;
+        color: #000 !important;
+        font-size: 13px !important;
+        padding: 6px 8px;
+        white-space: nowrap !important; /* Ensure 1-liner */
+        text-align: left;
+      }
+      td {
+        padding: 4px 6px;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+      }
+
+      .buttons {
+        display: none !important;
+      }
+
+      .footer-nav {
+        display: none !important;
+      }
+
+      .winner {
+        font-size: 14px;
+        color: #000 !important;
+        margin: 8px 0;
+        background-color: #2d7a2d;
+      }
     }
 
 
@@ -165,6 +198,32 @@
         background: #255f25;  /* darker green on hover */
         }
     }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgb(45, 139, 58);
+      border-top: 1px solid #ccc;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+    .btn-start {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+    }
+    @media (max-width: 480px) {
+      .section-card {
+        padding: 16px;
+      }
+      .btn-start {
+        font-size: 16px;
+      }
   </style>
 </head>
 
@@ -200,10 +259,12 @@
 
   <div class="buttons">
     <button id="printBtn">📄 Print Scorecard</button>
-    <button id="newMatchBtn">🆕 Start New Match</button>
   </div>      
   </div>
 </div>
+<footer class="footer-nav text-center" onclick="startNewMatch()">
+    <div>🏏<br>New Match</div>
+</footer>
 
 <script src="assets/js/victory.js"></script>
 <script>
@@ -211,24 +272,6 @@
     window.print();
   });
 
-  document.getElementById("newMatchBtn").addEventListener("click", function () {
-    const confirmStart = confirm("Have you saved the current match?\nStarting a new match will clear existing data.");
-    if (confirmStart) {
-      // Save summary to match history
-      const summary = {
-        date: new Date().toISOString(),
-        teams: `${localStorage.getItem("teamA")} vs ${localStorage.getItem("teamB")}`,
-        result: `${localStorage.getItem("matchWinner")} ${localStorage.getItem("matchVictoryType")} ${localStorage.getItem("matchMargin")}`
-      };
-      const history = JSON.parse(localStorage.getItem("matchHistory") || "[]");
-      history.unshift(summary);
-      localStorage.setItem("matchHistory", JSON.stringify(history));
-
-      // Clear and redirect
-      localStorage.clear();
-      window.location.href = "index.html";
-    }
-  });
   // Extend populateScorecard logic
   (function() {
     function ballsToOvers(balls) {
