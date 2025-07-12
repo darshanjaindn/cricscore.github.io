@@ -73,25 +73,76 @@
     }
 
     button {
-      margin: 0 10px;
-      padding: 12px 20px;
-      font-size: 16px;
-      background: #ffffff;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+        margin: 0 10px;
+        padding: 12px 20px;
+        font-size: 16px;
+        background-color: #2d7a2d; /* Green background */
+        color: white;              /* White text */
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
     }
 
     button:hover {
-      background: #255f25;
+        background-color: #2d7a2d; /* No color change on hover */
     }
 
     @media print {
-      .buttons {
-        display: none;
-      }
+        body {
+            background: #fff;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            padding: 10px 5px;
+            font-size: 14px;
+            background: #255f25;
+            color: #fff;
+            text-align: center;
+        }
+
+        .container {
+            margin: 0;
+            padding: 0;
+            max-width: 100%;
+        }
+
+        .section-card {
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: none;
+            border: 1px solid #ccc;
+            border-radius: 0;
+        }
+
+        h1, h2, h3 {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        table {
+            font-size: 11px;
+            margin: 6px 0;
+        }
+
+        th, td {
+            padding: 4px 6px;
+        }
+
+        .buttons {
+            display: none !important;
+        }
+
+        .winner {
+            font-size: 14px;
+            color: #000;
+            margin: 8px 0;
+            background-color: #2d7a2d;
+        }
     }
+
 
     @media (max-width: 600px) {
       th, td {
@@ -99,9 +150,20 @@
       }
 
       button {
-        font-size: 14px;
-        padding: 10px 16px;
-      }
+        margin: 0 10px;
+        padding: 12px 20px;
+        font-size: 16px;
+        background: #2d7a2d; /* green background */
+        color: #fff;          /* white text */
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        }
+
+    button:hover {
+        background: #255f25;  /* darker green on hover */
+        }
     }
   </style>
 </head>
@@ -137,34 +199,36 @@
   </div>
 
   <div class="buttons">
-    <button onclick="window.print()">📄 Print Scorecard</button>
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#confirmNewMatchModal">
-        🆕 Start New Match
-    </button>
-      
-    <!-- Modal -->
-    <div class="modal fade" id="confirmNewMatchModal" tabindex="-1" aria-labelledby="confirmNewMatchLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="confirmNewMatchLabel">Confirm New Match</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            Have you saved the current match? Starting a new match will clear existing data.
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger" id="confirmNewMatchBtn">Yes, Start New</button>
-        </div>
-        </div>
-    </div>
-    </div>      
+    <button id="printBtn">📄 Print Scorecard</button>
+    <button id="newMatchBtn">🆕 Start New Match</button>
+  </div>      
   </div>
 </div>
 
 <script src="assets/js/victory.js"></script>
 <script>
+  document.getElementById("printBtn").addEventListener("click", function () {
+    window.print();
+  });
+
+  document.getElementById("newMatchBtn").addEventListener("click", function () {
+    const confirmStart = confirm("Have you saved the current match?\nStarting a new match will clear existing data.");
+    if (confirmStart) {
+      // Save summary to match history
+      const summary = {
+        date: new Date().toISOString(),
+        teams: `${localStorage.getItem("teamA")} vs ${localStorage.getItem("teamB")}`,
+        result: `${localStorage.getItem("matchWinner")} ${localStorage.getItem("matchVictoryType")} ${localStorage.getItem("matchMargin")}`
+      };
+      const history = JSON.parse(localStorage.getItem("matchHistory") || "[]");
+      history.unshift(summary);
+      localStorage.setItem("matchHistory", JSON.stringify(history));
+
+      // Clear and redirect
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+  });
   // Extend populateScorecard logic
   (function() {
     function ballsToOvers(balls) {

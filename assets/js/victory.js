@@ -48,10 +48,14 @@
   
     titleEl.innerText = `${data.teamA} vs ${data.teamB}`;
     resultEl.innerText = `${data.matchWinner} ${data.matchVictoryType} ${data.matchMargin}`;
-    resultEl.style.color = "#2d7a2d"; // dark green
+    resultEl.style.color = "#ffff"; // white
   
-    const innings1Summary = `Innings 1: ${data.teamA} – ${data.innings1Score}/${data.innings1Wickets} (${formatOvers(data.innings1Balls)})`;
-    const innings2Summary = `Innings 2: ${data.teamB} – ${data.innings2Score}/${data.innings2Wickets} (${formatOvers(data.innings2Balls)})`;
+    const trophy = " 🏆";
+    const isTeamAWinner = data.teamA === data.matchWinner;
+    const isTeamBWinner = data.teamB === data.matchWinner;
+
+    const innings1Summary = `${data.teamA}${isTeamAWinner ? trophy : ""} – ${data.innings1Score}/${data.innings1Wickets} (${formatOvers(data.innings1Balls)})`;
+    const innings2Summary = `${data.teamB}${isTeamBWinner ? trophy : ""} – ${data.innings2Score}/${data.innings2Wickets} (${formatOvers(data.innings2Balls)})`;
   
     in1Heading.innerText = innings1Summary;
     in2Heading.innerText = innings2Summary;
