@@ -97,6 +97,13 @@
       padding: 10px 0;
       font-size: 14px;
     }
+    #runRateContainer {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      font-size: small;
+    }
   </style>
 </head>
 <body>
@@ -111,7 +118,11 @@
       <!-- Match Score Display -->
       <div class="section-card text-center">
         <div class="scoreboard" id="scoreDisplay"></div>
-        <div id="crrDisplay">CRR: 0.00</div>
+        <div id="runRateContainer">
+          <div id="crrDisplay">CRR: 0.00</div>
+          <div id="rrrDisplay"></div>
+          <div id="targetDisplay"></div>
+        </div>
       </div>
 
       <!-- Batsman/Bowler Info -->
@@ -170,13 +181,13 @@
       <div class="section-card">
         <div class="checkbox-group mb-3">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="wide"><label class="form-check-label" for="wide">Wide</label>
+            <input class="form-check-input" type="checkbox" id="wide"><label class="form-check-label" for="wide">Wd</label>
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="checkbox" id="noBall"><label class="form-check-label" for="noBall">NB</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="byes"><label class="form-check-label" for="byes">Byes</label>
+            <input class="form-check-input" type="checkbox" id="byes"><label class="form-check-label" for="byes">B</label>
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="checkbox" id="legByes"><label class="form-check-label" for="legByes">LB</label>

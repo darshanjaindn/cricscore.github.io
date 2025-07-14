@@ -87,6 +87,24 @@ function updateScoreDisplay() {
   document.getElementById("scoreDisplay").innerText = `${battingTeam} Batting, ${score}-${wickets} (${overs}.${currentBall})`;
   document.getElementById("crrDisplay").innerText = `CRR: ${crr}`;
 
+  // 🔥 Show Target & RRR only during 2nd innings
+  const currentInnings = localStorage.getItem("currentInnings");
+  if (currentInnings === "innings2") {
+    const target = parseInt(localStorage.getItem("innings1_score") || "0", 10) + 1;
+    const totalOvers = parseInt(localStorage.getItem("overs") || "20", 10);
+    const ballsRemaining = (totalOvers * 6) - balls;
+    const oversRemaining = ballsRemaining / 6;
+    const runsRemaining = target - score;
+    const rrr = (oversRemaining > 0) ? (runsRemaining / oversRemaining).toFixed(2) : "∞";
+
+    document.getElementById("rrrDisplay").innerText = `RRR: ${rrr}`;
+    document.getElementById("targetDisplay").innerText = `🎯Target: ${runsRemaining} of ${ballsRemaining}`;
+  } else {
+    // Clear RRR & Target in 1st innings
+    document.getElementById("rrrDisplay").innerText = "";
+    document.getElementById("targetDisplay").innerText = "";
+  }
+
   // Ensure batterStats entries exist before accessing
   if (!batterStats[striker]) {
     batterStats[striker] = { runs: 0, balls: 0, fours: 0, sixes: 0 };
@@ -127,16 +145,16 @@ function updateScoreDisplay() {
   document.getElementById("bowlerWickets").innerText = b.wickets;
   document.getElementById("bowlerER").innerText = bowlerER;
 
-  // Over log display, with classes for styling
+  // Over log display
   document.getElementById("overLog").innerHTML = `<strong>This over:</strong> ${overLog.map(ball => {
-    let className = "default-ball"; // normal runs
+    let className = "default-ball";
     if (ball.startsWith("wk")) className = "wicket-ball";
     else if (ball.startsWith("wd") || ball.startsWith("nb") || ball.startsWith("b") || ball.startsWith("lb")) className = "extra-ball";
     else if (ball === "4" || ball === "6") className = "boundary-ball";
-
     return `<span class="${className}">${ball}</span>`;
   }).join(" ")}`;
 }
+
 
 // Calculate Strike Rate
 function calculateSR(batter) {
@@ -526,6 +544,14 @@ function endFirstInnings() {
   let { battingTeam, bowlingTeam } = getTeamsByInnings(tempInn, teamA, teamB, tossWinner, tossChoice);
   localStorage.setItem("battingTeam", battingTeam);
   localStorage.setItem("bowlingTeam", bowlingTeam);
+
+  // Alert for second innings target
+  const target = parseInt(localStorage.getItem("match_score") || "0", 10) + 1; // target is one more than score
+  const totalBalls = parseInt(localStorage.getItem("overs") || "20", 10) * 6;
+  const requiredRunRate = (target / (totalBalls / 6)).toFixed(2); // RRR = runs / overs
+
+  alert(`${battingTeam} needs to chase ${target} runs in ${totalBalls / 6} overs. Required Run Rate: ${requiredRunRate} runs per over.`);
+
   console.log("Ending 1st Innings... End")
 }
 

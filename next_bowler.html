@@ -77,19 +77,8 @@
   <button onclick="submitBowler()" class="btn btn-success btn-start">Continue Scoring</button>
 </div>
 
-<footer>
-  <div class="footer-nav text-center">
-    <div>🏏<br>New Match</div>
-    <div>👥<br>Teams</div>
-    <div>📜<br>History</div>
-  </div>
-</footer>
-
 <script>
   // Display bowling team name from storage
-  const teamA = localStorage.getItem("teamA") || "Team A";
-  const teamB = localStorage.getItem("teamB") || "Team B";
-  const currentInnings = localStorage.getItem("currentInnings") || "innings1";
   const bowlingTeam = localStorage.getItem("bowlingTeam")
 
   document.getElementById("bowlingTeam").innerText = `${bowlingTeam} Bowling`;
