@@ -9,6 +9,9 @@ let currentInnings = localStorage.getItem("currentInnings") || "innings1";
 const tossWinner = localStorage.getItem("tossWinner")
 const tossChoice = localStorage.getItem("opted")
 
+let matchEnded = false; // 🔁 Global flag to avoid multiple redirects
+
+let historyStack = []; // Stack to store the history of match states
 
 if (!tossWinner || !tossChoice) {
   alert("Toss information missing. Please go back and complete team/toss setup.");
@@ -16,9 +19,7 @@ if (!tossWinner || !tossChoice) {
   throw new Error("Missing tossWinner or tossChoice in localStorage.");
 }
 
-
 let { battingTeam, bowlingTeam } = getTeamsByInnings(currentInnings, teamA, teamB, tossWinner, tossChoice);
-
 let score = 0, wickets = 0, balls = 0;
 let overLog = [];
 
@@ -32,7 +33,6 @@ let batterStats = {
 let bowlerStats = {
   [bowler]: { balls: 0, runs: 0, wickets: 0 }
 };
-
 
 // Determing Batting & Bowling Team
 function getTeamsByInnings(innings, teamA, teamB, tossWinner, tossChoice) {
@@ -155,7 +155,6 @@ function updateScoreDisplay() {
   }).join(" ")}`;
 }
 
-
 // Calculate Strike Rate
 function calculateSR(batter) {
   return batter.balls > 0 ? ((batter.runs / batter.balls) * 100).toFixed(2) : "0.00";
@@ -163,6 +162,8 @@ function calculateSR(batter) {
 
 // Scoring Logic
 function scoreRun(runs) {
+  console.log("score start...");
+  saveStateToHistory();
   const wide = document.getElementById("wide").checked;
   const noBall = document.getElementById("noBall").checked;
   const wicket = document.getElementById("wicket").checked;
@@ -174,11 +175,38 @@ function scoreRun(runs) {
   let runText = runs.toString();
 
   // Format over log text
-  if (wide) runText = `wd+${runs}`;
-  else if (noBall) runText = `nb+${runs}`;
-  else if (byes) runText = `b+${runs}`;
-  else if (legByes) runText = `lb+${runs}`;
-  else if (wicket) runText = runs > 0 ? `wk+${runs}` : `wk`;
+  if (wide && wicket) {
+    // If wide + wicket event occurs
+    runText = `wd+wk`;
+  } else if(wide && wicket && runs > 0) {
+    // If wide + wicket event occurs
+    runText = `wd+wk+${runs}`;
+  } else if (wide && runs > 0) {
+    // If wide + runs occurs (no wicket)
+    runText = `wd+${runs}`;
+  } else if (noBall && wicket) {
+    // If noBall + wicket event occurs
+    runText = `nb+wk`;
+  } else if (noBall && wicket && runs > 0) {
+    // If noBall + wicket event occurs
+    runText = `nb+wk+${runs}`;
+  } else if (noBall && runs > 0) {
+    // If noBall + runs occurs (no wicket)
+    runText = `nb+${runs}`;
+  } else if (byes) {
+    // If byes
+    runText = `b+${runs}`;
+  } else if (legByes) {
+    // If leg byes
+    runText = `lb+${runs}`;
+  } else if (wicket && runs > 0) {
+    // If wicket with runs (like a run out scenario, e.g., "wk+1")
+    runText = `wk+${runs}`;
+  } else if (wicket) {
+    // If just a wicket (without runs)
+    runText = `wk`;
+  }
+
 
   // Calculate legal balls including this ball
   // We add this ball’s log *after* all updates, so count + 1 for current ball
@@ -186,6 +214,7 @@ function scoreRun(runs) {
 
   // ===== WICKET CASE =====
   if (wicket) {
+    saveStateToHistory(); 
     wickets++;
     score += runs;
     // Wk + Wd or Wk + Nb Case
@@ -230,7 +259,6 @@ function scoreRun(runs) {
     // 🛑 Next: Did this fall on the last legal ball of the over?
     const legalBallsInOver = overLog.filter(log => !log.startsWith("wd") && !log.startsWith("nb")).length;
     if (legalBallsInOver === 6) {
-      console.log("Over completed..")
       localStorage.setItem("overCompletedAfterWicket", "true");
       localStorage.setItem("newOverStarted", "true");
       overLog = [];
@@ -364,25 +392,84 @@ function swapBatsman(updateUI = true) {
   if (updateUI) updateScoreDisplay();
 }
 
-function retireBatsman() {
-  alert("Retire logic to be implemented");
+
+function saveStateToHistory() {
+  const snapshot = structuredClone({
+    score, wickets, balls,
+    overLog, batterStats, bowlerStats,
+    striker, nonStriker, bowler, currentInnings
+  });
+  historyStack.push(snapshot);
+  if (historyStack.length > 20) historyStack.shift();
 }
+
+// function undoLastBall() {
+//   if (historyStack.length === 0) {
+//     alert("No actions to undo");
+//     return;
+//   }
+
+//   const last = historyStack.pop();
+
+//   // Restore variables
+//   ({
+//     score, wickets, balls,
+//     overLog, batterStats, bowlerStats,
+//     striker, nonStriker, bowler, currentInnings
+//   } = last);
+
+//   // Sync back to UI and localStorage
+//   persistMatchState();
+//   saveInningsToLocalStorage();
+//   updateScoreDisplay();
+// }
+
 
 function undoLastBall() {
-  alert("Undo logic to be implemented");
+  const last = historyStack.pop();
+  if (!last) {
+    alert("Nothing to undo");
+    return;
+  }
+
+  // Restore full ball state
+  ({ score, wickets, balls, overLog, batterStats, bowlerStats, striker, nonStriker, bowler, currentInnings } = last);
+
+  // If last ball was wicket AND we redirected to next_batsmen.html:
+  const outList = JSON.parse(localStorage.getItem("outBatsmen") || "[]");
+  const batterOrder = JSON.parse(localStorage.getItem("batterOrder") || "[]");
+
+  const lastOut = outList[outList.length - 1];
+  if (last.overLog.some(log => log.startsWith("wk")) && lastOut) {
+    // Remove last wicket log
+    overLog.pop();
+
+    // Put batsman back
+    outList.pop();
+    localStorage.setItem("outBatsmen", JSON.stringify(outList));
+
+    // Also remove first available batsman in batting order backup (reverse of push)
+    const lastIn = batterOrder.pop();
+    localStorage.setItem("batterOrder", JSON.stringify(batterOrder));
+
+    // Reset striker/nonStriker to how they were
+    localStorage.setItem("current_strikerName", last.striker);
+    localStorage.setItem("current_nonStrikerName", last.nonStriker);
+  }
+
+  // Clear flags to prevent page navigation interference
+  localStorage.removeItem("newOverStarted");
+  localStorage.removeItem("overCompletedAfterWicket");
+  localStorage.removeItem("postInningsRedirect");
+
+  // Sync UI and stored state
+  persistMatchState();
+  saveInningsToLocalStorage();
+  localStorage.setItem("currentInnings", currentInnings);
+  updateScoreDisplay();
 }
 
-function moreOptions() {
-  alert("More options to be implemented");
-}
 
-function showPartnerships() {
-  alert("Partnership details to be implemented");
-}
-
-function addExtras() {
-  alert("Add extras logic to be implemented");
-}
 
 // Save Inning wise data to local Storage
 function saveInningsToLocalStorage() {
@@ -447,24 +534,19 @@ function saveInningsToLocalStorage() {
     localStorage.setItem(storageKey, JSON.stringify(innings1Data));
   }
   else {
-    console.log("2nd inning:", currentInnings)
     const storageKey = "matchData2";
     
     // Ensure clean slate for 2nd innings only at the beginning
     const isStartOfInnings2 = Number(localStorage.getItem("match_balls") || 0) === 0;
-    console.log("match balls:", localStorage.getItem("match_balls"))
-    console.log("Inning1completed?: ", localStorage.getItem("inningsCompleted"))
     secondInningsResetDone = localStorage.getItem("secondInningsStarted") === "true";
 
     let innings2Data;
 
     if (!isStartOfInnings2 && secondInningsResetDone) {
       // Continue from existing data
-      console.log("📝 Continue from existing data");
       innings2Data = JSON.parse(localStorage.getItem(storageKey)) || {};
     } else {
       // Start fresh
-      console.log("🔄 Initializing new data for second innings");
       innings2Data = {};
       localStorage.setItem("matchData2ResetDone", "true");
     }
@@ -479,7 +561,6 @@ function saveInningsToLocalStorage() {
     innings2Data[battingTeam] = innings2Data[battingTeam] || {};
     innings2Data[bowlingTeam] = innings2Data[bowlingTeam] || {};
 
-    console.log("i2data: ",innings2Data);
     // --- Batter Stats ---
     const batterOrder = JSON.parse(localStorage.getItem("batterOrder") || "[]");
     const batters = batterOrder.length > 0 ? batterOrder : [striker, nonStriker];
@@ -515,8 +596,7 @@ function saveInningsToLocalStorage() {
     if (!bKey) {
       bKey = "bowler" + (existingBowlerEntries.length + 1);
     }
-    console.log("existingBowlerEntries:", existingBowlerEntries);
-    console.log("bKey: ",bKey);
+
     const overs = `${Math.floor(statsBow.balls / 6)}.${statsBow.balls % 6}`;
     innings2Data[bowlingTeam][bKey] = {
       name: bowler,
@@ -533,7 +613,6 @@ function saveInningsToLocalStorage() {
 
 function endFirstInnings() {
   // Saving 1st innings score
-  console.log("Ending 1st Innings... Start")
   localStorage.setItem("innings1_score", localStorage.getItem("match_score") || "0");
   localStorage.setItem("innings1_wickets", localStorage.getItem("match_wickets") || "0");
   localStorage.setItem("innings1_ballsFaced", localStorage.getItem("match_balls") || "0");
@@ -552,19 +631,16 @@ function endFirstInnings() {
 
   alert(`${battingTeam} needs to chase ${target} runs in ${totalBalls / 6} overs. Required Run Rate: ${requiredRunRate} runs per over.`);
 
-  console.log("Ending 1st Innings... End")
 }
 
 // Start the second Innings 
 function startSecondInnings() {
-  console.log("start2ndInnings...")
   
   currentInnings = "innings2";
   localStorage.setItem("currentInnings", currentInnings);
   localStorage.setItem("matchData2ResetDone", "false");
   
   const secondInningsStarted = localStorage.getItem("secondInningsStarted") === "true";
-  console.log("🔍 secondInningsStarted flag", secondInningsStarted);
   if (secondInningsStarted) {
     // Already started, load from persisted state
     loadPersistedMatchState();
@@ -591,7 +667,6 @@ function startSecondInnings() {
 
   // Save initial 2nd innings state
   localStorage.setItem("secondInningsStarted", "true");
-  console.log("seting secondInningsStarted - True in StartSecondInnings()...")
   localStorage.setItem("match_score", score);
   localStorage.setItem("match_wickets", wickets);
   localStorage.setItem("match_balls", balls);
@@ -648,7 +723,7 @@ function determineMatchWinner() {
   window.location.href = "victory.html";
 }
 
-let matchEnded = false; // 🔁 Global flag to avoid multiple redirects
+
 
 function checkInningsCompletion() {
   if (matchEnded) return true;
@@ -695,7 +770,6 @@ window.onload = () => {
   let currentInnings = localStorage.getItem("currentInnings") || "innings1";
 
   if (currentInnings === "innings2") {
-    console.log("starting 2nd inning on load")
     startSecondInnings();
   } else {
     loadPersistedMatchState();
