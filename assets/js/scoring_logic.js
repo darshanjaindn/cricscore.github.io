@@ -174,6 +174,7 @@ function scoreRun(runs) {
   const ballCounted = !wide && !noBall;
   let runText = runs.toString();
 
+
   // Format over log text
   if (wide && wicket) {
     // If wide + wicket event occurs
