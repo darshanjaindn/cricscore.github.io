@@ -56,6 +56,26 @@
         font-size: 16px;
       }
     }
+    #batsmanOptions {
+        display: flex;
+        gap: 1.5rem; /* space between buttons */
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    #batsmanOptions .form-check {
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem; /* larger label text */
+        cursor: pointer;
+    }
+
+    #batsmanOptions .form-check-input {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -84,14 +104,6 @@
 
   <button onclick="submitNewBatsman()" class="btn btn-success btn-start">Continue Scoring</button>
 </div>
-
-<footer>
-  <div class="footer-nav text-center">
-    <div>🏏<br>New Match</div>
-    <div>👥<br>Teams</div>
-    <div>📜<br>History</div>
-  </div>
-</footer>
 
 <script>
     const teamA = localStorage.getItem("teamA") || "Team A";
