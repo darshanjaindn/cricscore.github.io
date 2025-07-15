@@ -178,19 +178,13 @@ function scoreRun(runs) {
   if (wide && wicket) {
     // If wide + wicket event occurs
     runText = `wd+wk`;
-  } else if(wide && wicket && runs > 0) {
-    // If wide + wicket event occurs
-    runText = `wd+wk+${runs}`;
-  } else if (wide && runs > 0) {
+  } else if (wide && runs >= 0) {
     // If wide + runs occurs (no wicket)
     runText = `wd+${runs}`;
   } else if (noBall && wicket) {
     // If noBall + wicket event occurs
     runText = `nb+wk`;
-  } else if (noBall && wicket && runs > 0) {
-    // If noBall + wicket event occurs
-    runText = `nb+wk+${runs}`;
-  } else if (noBall && runs > 0) {
+  } else if (noBall && runs >= 0) {
     // If noBall + runs occurs (no wicket)
     runText = `nb+${runs}`;
   } else if (byes) {
@@ -199,13 +193,14 @@ function scoreRun(runs) {
   } else if (legByes) {
     // If leg byes
     runText = `lb+${runs}`;
-  } else if (wicket && runs > 0) {
+  } else if (wicket && runs >= 0) {
     // If wicket with runs (like a run out scenario, e.g., "wk+1")
     runText = `wk+${runs}`;
   } else if (wicket) {
     // If just a wicket (without runs)
     runText = `wk`;
   }
+
 
 
   // Calculate legal balls including this ball
