@@ -101,9 +101,52 @@
       display: flex;
       gap: 16px;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      font-size: small;
+      width: 100%;
+    }
+
+    #teamExtrasContainer {
+      display: flex;
+      justify-content: center;  /* By default, extras will be centered */
+      width: 100%;
       font-size: small;
     }
+
+    #teamExtrasDisplay {
+      font-size: small;
+    }
+
+    #runRateContainer.second-innings {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    #runRateContainer.second-innings > div {
+      flex: 1;
+      text-align: center;
+    }
+
+    #crrDisplay {
+      text-align: left;
+    }
+
+    #rrrDisplay {
+      text-align: center;
+    }
+
+    #targetDisplay {
+      text-align: right;
+    }
+
+    #teamExtrasContainer.second-innings {
+      justify-content: center;
+      margin-bottom: 8px; /* To give space between extras and run rates */
+    }
+
+
   </style>
 </head>
 <body>
@@ -118,6 +161,13 @@
       <!-- Match Score Display -->
       <div class="section-card text-center">
         <div class="scoreboard" id="scoreDisplay"></div>
+
+        <!-- Team Extras Section -->
+        <div id="teamExtrasContainer">
+          <div id="teamExtrasDisplay">Extras: 0</div>
+        </div>
+
+        <!-- Run Rate Container (CRR, RRR, Target) -->
         <div id="runRateContainer">
           <div id="crrDisplay">CRR: 0.00</div>
           <div id="rrrDisplay"></div>
