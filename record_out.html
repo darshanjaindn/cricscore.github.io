@@ -56,15 +56,35 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Modal: Start Second Innings -->
+  <div class="modal fade" id="startSecondInningsModal" tabindex="-1" aria-labelledby="startSecondInningsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border: 2px solid #2d7a2d;">
+        <div class="modal-header" style="background-color: #2d7a2d; color: white;">
+          <h5 class="modal-title" id="startSecondInningsModalLabel">Second Innings</h5>
+        </div>
+        <div class="modal-body text-center">
+          <img src="assets/images/cricScorerLogo.png" alt="Cricket Icon" style="width: 80px; margin-bottom: 15px;" />
+          <p id="secondInningMsg"></p>
+          <p id="secondInningMsg">
+            2nd innings in <span id="countdownDisplay">4</span>s
+          </p>
+          <progress id="countdownProgress" value="0" max="4" style="width: 100%; height: 20px;"></progress>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <button onclick="recordOutBatsman()" class="btn btn-success btn-start">Confirm and Continue</button>
 </div>
 
 <script>
-  const battingTeam = localStorage.getItem("battingTeam") || "Team A";
-  document.getElementById("battingTeam").innerText = `${battingTeam} Batting`;
+  document.getElementById("battingTeam").innerText = `${localStorage.getItem("battingTeam")} Batting`;
 
-  let striker = localStorage.getItem("current_strikerName") || "Striker";
-  let nonStriker = localStorage.getItem("current_nonStrikerName") || "Non-striker";
+  striker = localStorage.getItem("current_strikerName") || "Striker";
+  nonStriker = localStorage.getItem("current_nonStrikerName") || "Non-striker";
 
   const optionsDiv = document.getElementById("batsmanOptions");
   optionsDiv.innerHTML = `
@@ -78,6 +98,38 @@
     </div>
   `;
 
+ 
+
+  function showSecondInningsModal(team, target, totalBalls, rrr) {
+    console.log(team);
+    const msg = `${team} Requires ${target} in ${totalBalls} balls @required run rate ${rrr}`;
+    console.log("Msg:", msg);
+     // show modal
+    const modal = new bootstrap.Modal(document.getElementById('startSecondInningsModal'));
+    document.getElementById("secondInningMsg").innerText = msg;
+    console.log("modal:", modal);
+    modal.show();
+
+    let countdown = 4;
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const progressBar = document.getElementById('countdownProgress');
+
+    countdownDisplay.textContent = countdown;
+
+    const timer = setInterval(() => {
+        countdown--;
+        if (countdown >= 0) {
+        countdownDisplay.textContent = countdown;
+        progressBar.value = 4 - countdown;
+        }
+        if (countdown < 0) {
+        clearInterval(timer);
+        modal.hide();
+        startSecondInnings(); // Your existing function
+        }
+    }, 1000);
+    }
+
   function recordOutBatsman() {
     const selectedOut = document.querySelector('input[name="outBatsman"]:checked').value;
 
@@ -87,11 +139,18 @@
     }
     console.log("PrevOutBatsment: ", outBatsmen);
     localStorage.setItem("outBatsmen", JSON.stringify(outBatsmen));
-
     // Redirect based on flow
     const nextPage = localStorage.getItem("postInningsRedirect") || "scoring.html";
-    window.location.href = nextPage;
+    const batTeam = localStorage.getItem("battingTeam");
+    const tar = localStorage.getItem("innings1_score");
+    const totBalls = localStorage.getItem("innings1_ballsFaced");
+    const reqRate = (tar / (totBalls / 6)).toFixed(2);
+    showSecondInningsModal(batTeam, tar, totBalls, reqRate);
+    setTimeout(function() {
+        window.location.href = nextPage;
+      }, 4000);  // 4000ms = 4 seconds
   }
+
 </script>
 
 </body>
