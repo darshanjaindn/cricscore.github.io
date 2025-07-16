@@ -389,28 +389,6 @@ function saveStateToHistory() {
   if (historyStack.length > 20) historyStack.shift();
 }
 
-// function undoLastBall() {
-//   if (historyStack.length === 0) {
-//     alert("No actions to undo");
-//     return;
-//   }
-
-//   const last = historyStack.pop();
-
-//   // Restore variables
-//   ({
-//     score, wickets, balls,
-//     overLog, batterStats, bowlerStats,
-//     striker, nonStriker, bowler, currentInnings
-//   } = last);
-
-//   // Sync back to UI and localStorage
-//   persistMatchState();
-//   saveInningsToLocalStorage();
-//   updateScoreDisplay();
-// }
-
-
 function undoLastBall() {
   const last = historyStack.pop();
   if (!last) {
@@ -604,24 +582,32 @@ function endFirstInnings() {
   localStorage.setItem("innings1_ballsFaced", localStorage.getItem("match_balls") || "0");
   const matchData1 = localStorage.getItem("matchData1") || "{}";
   localStorage.setItem("innings1_data", matchData1);
-  //
+
+  // Preparing for the second innings
   tempInn = "innings2";
   let { battingTeam, bowlingTeam } = getTeamsByInnings(tempInn, teamA, teamB, tossWinner, tossChoice);
   localStorage.setItem("battingTeam", battingTeam);
   localStorage.setItem("bowlingTeam", bowlingTeam);
 
-  // Alert for second innings target
+  // Calculate target and RRR (Required Run Rate)
   const target = parseInt(localStorage.getItem("match_score") || "0", 10) + 1; // target is one more than score
   const totalBalls = parseInt(localStorage.getItem("overs") || "20", 10) * 6;
   const requiredRunRate = (target / (totalBalls / 6)).toFixed(2); // RRR = runs / overs
 
-  alert(`${battingTeam} needs to chase ${target} runs in ${totalBalls / 6} overs. Required Run Rate: ${requiredRunRate} runs per over.`);
+  // Update modal content
+  document.getElementById("secondInningsMessage").innerText = `${battingTeam} needs to chase ${target} runs in ${totalBalls / 6} overs.`;
+  document.getElementById("secondInningsTarget").innerText = `Target: ${target} runs`;
+  document.getElementById("secondInningsRRR").innerText = `Required Run Rate: ${requiredRunRate} runs per over`;
 
+  // Show the modal
+  $('#startSecondInningsModal').modal('show');
 }
 
 // Start the second Innings 
 function startSecondInnings() {
   
+  // Close the modal
+  $('#startSecondInningsModal').modal('hide');
   currentInnings = "innings2";
   localStorage.setItem("currentInnings", currentInnings);
   localStorage.setItem("matchData2ResetDone", "false");
