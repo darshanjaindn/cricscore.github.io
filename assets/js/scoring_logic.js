@@ -136,6 +136,7 @@ function updateScoreDisplay() {
   if (!bowlerStats[bowler]) {
     bowlerStats[bowler] = { balls: 0, runs: 0, wickets: 0 };
   }
+  // Display team extras
 
   // Update bowler info
   const b = bowlerStats[bowler];
@@ -227,8 +228,8 @@ function scoreRun(runs) {
     }
     if (!wide && !noBall) balls++;
     overLog.push(runText);
-    saveInningsToLocalStorage();
     persistMatchState();
+    saveInningsToLocalStorage();
     checkInningsCompletion();
 
     const totalOvers = parseInt(localStorage.getItem("overs"), 10);
@@ -264,7 +265,9 @@ function scoreRun(runs) {
       window.location.href = "next_batsmen.html";
       return;
     }
-    
+    persistMatchState();
+    saveInningsToLocalStorage();
+    checkInningsCompletion();
     // ✅ Otherwise, normal wicket handling
     localStorage.setItem("lastOverStriker", striker);
     localStorage.setItem("lastOverNonStriker", nonStriker);
@@ -314,9 +317,6 @@ function scoreRun(runs) {
       balls++;
       batterStats[striker].balls++;
       bowlerStats[bowler].balls++;
-      persistMatchState();
-      checkInningsCompletion();
-      saveInningsToLocalStorage();
     }
 
     bowlerStats[bowler].runs += runs;
@@ -405,6 +405,28 @@ function saveStateToHistory() {
   if (historyStack.length > 20) historyStack.shift();
 }
 
+// function undoLastBall() {
+//   if (historyStack.length === 0) {
+//     alert("No actions to undo");
+//     return;
+//   }
+
+//   const last = historyStack.pop();
+
+//   // Restore variables
+//   ({
+//     score, wickets, balls,
+//     overLog, batterStats, bowlerStats,
+//     striker, nonStriker, bowler, currentInnings
+//   } = last);
+
+//   // Sync back to UI and localStorage
+//   persistMatchState();
+//   saveInningsToLocalStorage();
+//   updateScoreDisplay();
+// }
+
+
 function undoLastBall() {
   const last = historyStack.pop();
   if (!last) {
@@ -418,6 +440,25 @@ function undoLastBall() {
   const outList = JSON.parse(localStorage.getItem("outBatsmen") || "[]");
   const batterOrder = JSON.parse(localStorage.getItem("batterOrder") || "[]");
 
+  // const lastOut = outList[outList.length - 1];
+  // if (last.overLog.some(log => log.startsWith("wk")) && lastOut) {
+  //   // Remove last wicket log
+  //   overLog.pop();
+
+  //   // Put batsman back
+  //   outList.pop();
+  //   localStorage.setItem("outBatsmen", JSON.stringify(outList));
+
+  //   // Also remove first available batsman in batting order backup (reverse of push)
+  //   const lastIn = batterOrder.pop();
+  //   localStorage.setItem("batterOrder", JSON.stringify(batterOrder));
+
+  //   // Reset striker/nonStriker to how they were
+  //   localStorage.setItem("current_strikerName", last.striker);
+  //   localStorage.setItem("current_nonStrikerName", last.nonStriker);
+  // }
+
+  // Clear flags to prevent page navigation interference
   localStorage.removeItem("newOverStarted");
   localStorage.removeItem("overCompletedAfterWicket");
   localStorage.removeItem("postInningsRedirect");
@@ -428,6 +469,8 @@ function undoLastBall() {
   localStorage.setItem("currentInnings", currentInnings);
   updateScoreDisplay();
 }
+
+
 
 // Save Inning wise data to local Storage
 function saveInningsToLocalStorage() {
