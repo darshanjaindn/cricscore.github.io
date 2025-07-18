@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Match Summary</title>
@@ -34,13 +35,13 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
-    h1, h2, h3 {
+    h1,h2,h3 {
       text-align: center;
       margin: 0.5em 0;
     }
 
     h1 {
-        font-size: 32px;
+      font-size: 32px;
     }
 
     h3 {
@@ -77,108 +78,120 @@
     }
 
     button {
-        margin: 0 10px;
-        padding: 12px 20px;
-        font-size: 16px;
-        background-color: #2d7a2d; /* Green background */
-        color: white;              /* White text */
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
+      margin: 0 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #2d7a2d;
+      /* Green background */
+      color: white;
+      /* White text */
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     button:hover {
-      background-color: #2d7a2d; /* No color change on hover */
+      background-color: #2d7a2d;
+      /* No color change on hover */
     }
 
     @media print {
       body {
-        background: #fff;
-        font-size: 12px;
+        background: #f2f2f2;
         margin: 0;
         padding: 0;
+        font-family: Arial, sans-serif;
+        color: #000;
       }
 
       header {
-        padding: 10px 5px;
-        font-size: 14px;
-        background: #255f25;
-        color: #fff;
+        background: #2d7a2d !important;
+        color: #fff !important;
         text-align: center;
+        padding: 10px;
       }
 
       .container {
-        margin: 0;
-        padding: 0;
-        max-width: 100%;
+        max-width: 960px;
+        margin: 10px auto;
+        padding: 5px;
       }
 
       .section-card {
-        padding: 10px;
-        margin-bottom: 10px;
-        box-shadow: none;
-        border: 1px solid #ccc;
-        border-radius: 0;
+        background: #ffffff !important;
+        border-radius: 10px !important;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+        border: none !important;
+      }
+
+      h1,
+      h2,
+      h3 {
+        text-align: center;
+        margin: 6px 0;
       }
 
       h1 {
-        margin: 6px 0;
         font-size: 32px;
-        color: #000 !important;
+        color: #2d7a2d !important;
       }
 
       h2 {
-        margin: 6px 0;
-        font-size: 18px;
-        color: #000 !important;
+        font-size: 24px;
+        color: #2d7a2d !important;
       }
 
       h3 {
-        margin: 6px 0;
-        font-size: 14px;
+        font-size: 18px;
         color: #2d7a2d !important;
       }
 
       table {
-        font-size: 11px;
-        margin: 6px 0;
-        border-collapse: collapse;
         width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0;
+        font-size: 11px;
       }
 
       th {
-        background-color: #e6f2e6 !important;
-        color: #000 !important;
-        font-size: 13px !important;
+        background-color: #2d7a2d !important;
+        /* dark green */
+        color: #fff !important;
+        /* white text */
         padding: 6px 8px;
-        white-space: nowrap !important; /* Ensure 1-liner */
         text-align: left;
+        white-space: nowrap;
+        font-size: 13px;
       }
+
       td {
         padding: 4px 6px;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #eee;
         white-space: nowrap;
-      }
-
-      .buttons {
-        display: none !important;
-      }
-
-      .footer-nav {
-        display: none !important;
+        color: #000;
       }
 
       .winner {
-        font-size: 14px;
-        color: #000 !important;
-        margin: 8px 0;
-        background-color: #2d7a2d;
+        font-size: 1.4em;
+        color: #fff;
+        margin: 6px 0;
+      }
+
+      /* Hide non-printable elements */
+      .buttons,
+      .footer-nav,
+      footer,
+      button {
+        display: none !important;
       }
     }
 
-
     @media (max-width: 600px) {
-      th, td {
+
+      th,
+      td {
         font-size: 14px;
       }
 
@@ -186,17 +199,20 @@
         margin: 0 10px;
         padding: 12px 20px;
         font-size: 16px;
-        background: #2d7a2d; /* green background */
-        color: #fff;          /* white text */
+        background: #2d7a2d;
+        /* green background */
+        color: #fff;
+        /* white text */
         border: none;
         border-radius: 6px;
         cursor: pointer;
         transition: background 0.3s ease;
-        }
+      }
 
-    button:hover {
-        background: #255f25;  /* darker green on hover */
-        }
+      button:hover {
+        background: #255f25;
+        /* darker green on hover */
+      }
     }
 
     footer {
@@ -206,170 +222,213 @@
       background: rgb(45, 139, 58);
       border-top: 1px solid #ccc;
     }
+
     .footer-nav {
       display: flex;
       justify-content: space-around;
       padding: 10px 0;
       font-size: 14px;
     }
+
     .btn-start {
       width: 100%;
       padding: 12px;
       font-size: 18px;
     }
+
     @media (max-width: 480px) {
       .section-card {
         padding: 16px;
       }
+
       .btn-start {
         font-size: 16px;
       }
+    }
   </style>
 </head>
 
 <body>
+  <div id="pdfExportArea">
+    <header>
+      <p id="matchTitle">Match Summary</p>
+      <h1 id="matchResult" class="winner"></h1>
+    </header>
 
-<header>
-  <p id="matchTitle">Match Summary</p>
-  <h1 id="matchResult" class="winner"></h1>
-</header>
+    <div class="container">
+      <!-- Innings 1 -->
+      <div class="section-card" id="innings1_section">
+        <h2 id="innings1_heading">Innings 1</h2>
 
-<div class="container">
-  <!-- Innings 1 -->
-  <div class="section-card" id="innings1_section">
-    <h2 id="innings1_heading">Innings 1</h2>
+        <h3>Batting</h3>
+        <table id="innings1_bat"></table>
 
-    <h3>Batting</h3>
-    <table id="innings1_bat"></table>
+        <h3>Bowling</h3>
+        <table id="innings1_bowl"></table>
+      </div>
 
-    <h3>Bowling</h3>
-    <table id="innings1_bowl"></table>
-  </div>
+      <!-- Innings 2 -->
+      <div class="section-card" id="innings2_section">
+        <h2 id="innings2_heading">Innings 2</h2>
 
-  <!-- Innings 2 -->
-  <div class="section-card" id="innings2_section">
-    <h2 id="innings2_heading">Innings 2</h2>
+        <h3>Batting</h3>
+        <table id="innings2_bat"></table>
 
-    <h3>Batting</h3>
-    <table id="innings2_bat"></table>
+        <h3>Bowling</h3>
+        <table id="innings2_bowl"></table>
+      </div>
 
-    <h3>Bowling</h3>
-    <table id="innings2_bowl"></table>
-  </div>
+      <div class="buttons">
+        <button id="printBtn">📄 Print Scorecard</button>
+        <button id="downloadPdfBtn">⬇️ Download PDF</button>
+      </div>
+    </div>
+    </div>
+    <footer class="footer-nav text-center" onclick="startNewMatch()">
+      <div>🏏<br>New Match</div>
+    </footer>
 
-  <div class="buttons">
-    <button id="printBtn">📄 Print Scorecard</button>
-  </div>      
-  </div>
-</div>
-<footer class="footer-nav text-center" onclick="startNewMatch()">
-    <div>🏏<br>New Match</div>
-</footer>
+    <script src="assets/js/victory.js"></script>
+    <script>
 
-<script src="assets/js/victory.js"></script>
-<script>
-  document.getElementById("printBtn").addEventListener("click", function () {
-    window.print();
-  });
+      // Extend populateScorecard logic
+      (function () {
+        function ballsToOvers(balls) {
+          const overs = Math.floor(balls / 6);
+          const rem = balls % 6;
+          return `${overs}.${rem}`;
+        }
 
-  // Extend populateScorecard logic
-  (function() {
-    function ballsToOvers(balls) {
-      const overs = Math.floor(balls / 6);
-      const rem = balls % 6;
-      return `${overs}.${rem}`;
-    }
+        const outBatsmen = JSON.parse(localStorage.getItem("outBatsmen") || "[]");
 
-    const outBatsmen = JSON.parse(localStorage.getItem("outBatsmen") || "[]");
+        const oldFillTables = window.fillTables;
 
-    const oldFillTables = window.fillTables;
+        window.fillTables = function (inningsData, batTableId, bowlTableId, teamName, ballsFaced, score, wickets, headingId) {
+          const overString = ballsToOvers(parseInt(ballsFaced || 0));
+          const fullScore = `${teamName} - ${score}/${wickets} (${overString})`;
+          document.getElementById(headingId).innerText = `Innings ${headingId.includes("1") ? "1" : "2"}: ${fullScore}`;
 
-    window.fillTables = function (inningsData, batTableId, bowlTableId, teamName, ballsFaced, score, wickets, headingId) {
-      const overString = ballsToOvers(parseInt(ballsFaced || 0));
-      const fullScore = `${teamName} - ${score}/${wickets} (${overString})`;
-      document.getElementById(headingId).innerText = `Innings ${headingId.includes("1") ? "1" : "2"}: ${fullScore}`;
+          // Batting table with * for not out
+          document.getElementById(batTableId).innerHTML = `
+          <tr><th>Batsman</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr>
+          ${Object.values(inningsData[teamName])
+              .filter(p => p.name)
+              .map(p => {
+                const isOut = outBatsmen.includes(p.name);
+                return `
+                <tr>
+                  <td>${p.name}${isOut ? "" : " *"}</td>
+                  <td>${p.score}</td>
+                  <td>${p.balls}</td>
+                  <td>${p["4s"]}</td>
+                  <td>${p["6s"]}</td>
+                  <td>${p.SR}</td>
+                </tr>
+              `;
+              }).join("")}
+        `;
 
-      // Batting table with * for not out
-      document.getElementById(batTableId).innerHTML = `
-        <tr><th>Batsman</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr>
-        ${Object.values(inningsData[teamName])
-          .filter(p => p.name)
-          .map(p => {
-            const isOut = outBatsmen.includes(p.name);
-            return `
+          // Bowling table
+          document.getElementById(bowlTableId).innerHTML = `
+          <tr><th>Bowler</th><th>O</th><th>R</th><th>W</th><th>ER</th></tr>
+          ${Object.values(inningsData[Object.keys(inningsData).find(k => k !== teamName)])
+              .filter(p => p.name)
+              .map(b => `
               <tr>
-                <td>${p.name}${isOut ? "" : " *"}</td>
-                <td>${p.score}</td>
-                <td>${p.balls}</td>
-                <td>${p["4s"]}</td>
-                <td>${p["6s"]}</td>
-                <td>${p.SR}</td>
+                <td>${b.name}</td>
+                <td>${b.overs}</td>
+                <td>${b.Runs}</td>
+                <td>${b.Wicket}</td>
+                <td>${b.ER}</td>
               </tr>
-            `;
-          }).join("")}
-      `;
+            `).join("")}
+        `;
+        };
 
-      // Bowling table
-      document.getElementById(bowlTableId).innerHTML = `
-        <tr><th>Bowler</th><th>O</th><th>R</th><th>W</th><th>ER</th></tr>
-        ${Object.values(inningsData[Object.keys(inningsData).find(k => k !== teamName)])
-          .filter(p => p.name)
-          .map(b => `
-            <tr>
-              <td>${b.name}</td>
-              <td>${b.overs}</td>
-              <td>${b.Runs}</td>
-              <td>${b.Wicket}</td>
-              <td>${b.ER}</td>
-            </tr>
-          `).join("")}
-      `;
-    };
+        const matchData = {
+          teamA: localStorage.getItem("teamA"),
+          teamB: localStorage.getItem("teamB"),
+          matchWinner: localStorage.getItem("matchWinner"),
+          matchVictoryType: localStorage.getItem("matchVictoryType"),
+          matchMargin: localStorage.getItem("matchMargin"),
 
-    const matchData = {
-      teamA: localStorage.getItem("teamA"),
-      teamB: localStorage.getItem("teamB"),
-      matchWinner: localStorage.getItem("matchWinner"),
-      matchVictoryType: localStorage.getItem("matchVictoryType"),
-      matchMargin: localStorage.getItem("matchMargin"),
+          innings1Score: localStorage.getItem("innings1_score"),
+          innings1Wickets: localStorage.getItem("innings1_wickets"),
+          innings1Balls: localStorage.getItem("innings1_ballsFaced"),
 
-      innings1Score: localStorage.getItem("innings1_score"),
-      innings1Wickets: localStorage.getItem("innings1_wickets"),
-      innings1Balls: localStorage.getItem("innings1_ballsFaced"),
+          innings2Score: localStorage.getItem("match_score"),
+          innings2Wickets: localStorage.getItem("match_wickets"),
+          innings2Balls: localStorage.getItem("match_balls"),
 
-      innings2Score: localStorage.getItem("match_score"),
-      innings2Wickets: localStorage.getItem("match_wickets"),
-      innings2Balls: localStorage.getItem("match_balls"),
-      
-      innings1: JSON.parse(localStorage.getItem("innings1_data") || "{}"),
-      innings2: JSON.parse(localStorage.getItem("matchData2") || "{}")
-    };
+          innings1: JSON.parse(localStorage.getItem("innings1_data") || "{}"),
+          innings2: JSON.parse(localStorage.getItem("matchData2") || "{}")
+        };
 
-    document.getElementById("matchTitle").innerText = `${matchData.teamA} vs ${matchData.teamB}`;
-    document.getElementById("matchResult").innerText = `${matchData.matchWinner} ${matchData.matchVictoryType} ${matchData.matchMargin}`;
+        document.getElementById("matchTitle").innerText = `${matchData.teamA} vs ${matchData.teamB}`;
+        document.getElementById("matchResult").innerText = `${matchData.matchWinner} ${matchData.matchVictoryType} ${matchData.matchMargin}`;
 
-    window.fillTables(
-      matchData.innings1,
-      "innings1_bat",
-      "innings1_bowl",
-      matchData.teamA,
-      matchData.innings1Balls,
-      matchData.innings1Score,
-      matchData.innings1Wickets,
-      "innings1_heading"
-    );
+        window.fillTables(
+          matchData.innings1,
+          "innings1_bat",
+          "innings1_bowl",
+          matchData.teamA,
+          matchData.innings1Balls,
+          matchData.innings1Score,
+          matchData.innings1Wickets,
+          "innings1_heading"
+        );
 
-    window.fillTables(
-      matchData.innings2,
-      "innings2_bat",
-      "innings2_bowl",
-      matchData.teamB,
-      matchData.innings2Balls,
-      matchData.innings2Score,
-      matchData.innings2Wickets,
-      "innings2_heading"
-    );
-  })();
-</script>
+        window.fillTables(
+          matchData.innings2,
+          "innings2_bat",
+          "innings2_bowl",
+          matchData.teamB,
+          matchData.innings2Balls,
+          matchData.innings2Score,
+          matchData.innings2Wickets,
+          "innings2_heading"
+        );
+      })();
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      // Existing print handler
+      document.getElementById("printBtn").addEventListener("click", function () {
+        window.print();
+      });
+
+      // NEW: Download PDF handler
+      document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+        const element = document.getElementById("pdfExportArea");
+
+        // Temporarily hide footer and buttons if present
+        const footer = document.querySelector("footer");
+        const buttons = document.querySelector(".buttons");
+        if (footer) footer.style.display = "none";
+        if (buttons) buttons.style.display = "none";
+
+        // Setup options
+        const opt = {
+          margin: 0,
+          filename: 'match-summary.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollY: 0
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+          // Restore hidden elements
+          if (footer) footer.style.display = "flex";
+          if (buttons) buttons.style.display = "block";
+        });
+      });
+    </script>
+  </div>
 </body>
+
 </html>
