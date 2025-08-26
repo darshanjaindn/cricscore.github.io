@@ -76,14 +76,14 @@ Suggestions, bug reports, or improvements are welcome via [issues](https://githu
 ---
 
 ## 📸 Screenshots
-![Match Summary](/cricscore.github.io/assets/images/Match_summary.png)
-![New Match](/cricscore.github.io/assets/images/New_match_page.png)
-![Batsmen Bowler Details](/cricscore.github.io/assets/images/Batsmen_bowler_page.png)
-![Live Score for 1st Innings](/cricscore.github.io/assets/images/live_score_page.png)
-![On Wicket New Batsmen](/cricscore.github.io/assets/images/new_batsmen_page.png)
-![Match Over Log](/cricscore.github.io/assets/images/Match_Overlog_page.png)
-![2nd Innings Live Score](/cricscore.github.io/assets/images/second_innings_live_score.png)
-![Match Summary](/cricscore.github.io/assets/images/Match_summary.png)
+![Match Summary](/assets/images/Match_summary.png)
+![New Match](/assets/images/New_match_page.png)
+![Batsmen Bowler Details](/assets/images/Batsmen_bowler_page.png)
+![Live Score for 1st Innings](/assets/images/live_score_page.png)
+![On Wicket New Batsmen](/assets/images/new_batsmen_page.png)
+![Match Over Log](/assets/images/Match_Overlog_page.png)
+![2nd Innings Live Score](/assets/images/second_innings_live_score.png)
+![Match Summary](/assets/images/Match_summary.png)
 
 
 
